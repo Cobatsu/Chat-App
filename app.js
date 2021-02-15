@@ -14,15 +14,20 @@ app.use(
   graphqlHTTP({
     schema: buildSchema(`
     
+    type Apple {
+        color: String!
+        price: String!
+    }
+
     type Query {
 
-        getMyApple(id:String) : String
+        getMyApple(color:String!) : [Apple]
 
     }
 
     type Mutation {
 
-        addMyApple(id:String) : String
+        addMyApple(color:String!, price:Float!) : Apple!
 
     }
 
@@ -34,8 +39,8 @@ app.use(
     `),
     rootValue:{
 
-        getMyApple: args => { const apples1 = apples.filter((value)=> value.id == args.id); return apples1[0].id } ,
-        addMyApple: args => { apples.push({id:args.id}); return args.id}
+        getMyApple: args => { const apples1 = apples.filter((value)=> value.color == args.color); return apples1 } ,
+        addMyApple: args => { const pushedApple = {color:args.color, price:args.price}; apples.push( pushedApple ); return {color:"ss"}}
 
     },
     graphiql: true,
