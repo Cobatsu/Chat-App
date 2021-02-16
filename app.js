@@ -43,20 +43,20 @@ app.use(
     type ToDo {
     
         id: ID!
-        title: String!
+        title: String
         description: String!
 
     }
 
     type Query {
 
-        todoList:[ToDo]
+        todoList:[ToDo!]!
 
     }
 
     type Mutation {
 
-        addTodo(title:String!,description:String!) : ToDo
+        addTodo(title:String!,description:String!) : ToDo!
         deleteTodo(id:ID!): ToDo
        
     }
@@ -85,7 +85,7 @@ app.use(
             })
 
             const lastTodo = await newTodo.save();
-
+            
             return lastTodo;
 
         },

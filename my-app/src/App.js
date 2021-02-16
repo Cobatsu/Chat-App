@@ -55,12 +55,16 @@ const DELETE_TODO = gql`
 
 const ToDoList = ()=>{
 
-  const { data  , loading , refetch } = useQuery(GET_TODO);
-  const [ addTodo ] = useMutation(ADD_TODO);
-  const [ deleteTodo ] = useMutation(DELETE_TODO);
+  const { data  , loading , refetch , error } = useQuery(GET_TODO);
+  const [ addTodo , { loading:addLoading  }] = useMutation(ADD_TODO);
+  const [ deleteTodo , { loading:deleteLoading }] = useMutation(DELETE_TODO);
 
   let refTitle;
   let refDescription;
+
+  console.log(data)
+
+  const mainLoadingResult = deleteLoading || addLoading || loading
 
   const onDeleteTodo = (todoID)=>{
 
@@ -74,8 +78,6 @@ const ToDoList = ()=>{
 
   }
 
-  if( loading ) { return <h4> Loading... </h4> }
- 
   return <React.Fragment>
 
     <div style={{width:'100%'}}> 
@@ -83,13 +85,14 @@ const ToDoList = ()=>{
       <input placeholder="Title" ref={ title => refTitle = title }/>
       <input placeholder="Description" ref={ desc => refDescription = desc } />
       <button onClick={ onAddTodo } > ADD TODO </button>
+      { mainLoadingResult &&  <span > loading... </span> }
 
     </div>
 
     <ul style={{padding:0 , width:'100%'}}>
     
         {
-          data.todoList.map( ({ id , title , description } )=> 
+          data && data.todoList.map( ({ id , title , description } )=> 
           
             <li style={{ margin:5 , width:'100%', display:'flex' , justifyContent:'space-between' }} key={ id } > {title} {description} 
 
@@ -114,7 +117,7 @@ function App() {
      
     <ApolloProvider client = {client} >
 
-      <div style={{margin:'5% 0 0 30%' , width:'500px'}} >
+      <div style={{margin:'5% 0 0 30%' , width:'600px'}} >
 
           <ToDoList/>
 
