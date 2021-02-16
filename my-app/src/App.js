@@ -21,7 +21,7 @@ const client = new ApolloClient({
 const ADD_TODO = gql`
  
   mutation AddMutation($title:String!,$description:String!) {
-     addTodo(title:$title,description:$description) {
+     addTodo(title:$title,description:$description) { 
        id
        title
        description
@@ -55,28 +55,28 @@ const DELETE_TODO = gql`
 
 const ToDoList = ()=>{
 
-  const { data  , loading , refetch , error } = useQuery(GET_TODO);
-  const [ addTodo , { loading:addLoading  }] = useMutation(ADD_TODO);
-  const [ deleteTodo , { loading:deleteLoading }] = useMutation(DELETE_TODO);
+  const { data  , loading , refetch  } = useQuery(GET_TODO);
+  const [ addTodo , { loading:addLoading , error  }] = useMutation(ADD_TODO);
+  const [ deleteTodo , { loading:deleteLoading }] = useMutation(DELETE_TODO); // useMutation and useQuery both rerenders the component
 
   let refTitle;
   let refDescription;
-
-  console.log(data)
 
   const mainLoadingResult = deleteLoading || addLoading || loading
 
   const onDeleteTodo = (todoID)=>{
 
-    deleteTodo( {variables:{id:todoID}} ).then((res)=>{ refetch(); })
+    deleteTodo( {variables:{id:todoID}} ).then((res)=>{ refetch() })
   
   }
 
   const onAddTodo = ()=> {
-
-    addTodo( {variables:{ title:refTitle.value, description:refDescription.value }} ).then((res)=>{ refetch(); })
+    
+    addTodo( {variables: { title:refTitle.value || null, description:refDescription.value || null } } ).then((res)=>{ refetch() })
 
   }
+
+  if(error) return <h4> { error.message } </h4>
 
   return <React.Fragment>
 
@@ -104,6 +104,7 @@ const ToDoList = ()=>{
         }
 
     </ul>
+
 
   </React.Fragment>
   
