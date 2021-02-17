@@ -8,7 +8,9 @@ mongoose.connect(_Url,{ useUnifiedTopology: true,useNewUrlParser: true })
 .then(()=>console.log('connected to DB'))
 .catch((err)=>console.log(err));
 
-const server = new ApolloServer( { schema } );
+const server = new ApolloServer( { schema , context:({req})=>{
+    console.log(req.body);
+}} );
 
 server.listen('8000').then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
