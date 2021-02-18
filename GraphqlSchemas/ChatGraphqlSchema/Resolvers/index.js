@@ -1,0 +1,2 @@
+const loginResolver = require('./LoginResolver');
+

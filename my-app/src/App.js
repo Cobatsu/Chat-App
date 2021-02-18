@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React , {useEffect,useState} from 'react';
-import ToDoList from './Todo'
+import ToDoList from './Components/Todo'
 import {Provider} from 'react-redux'
 import {applyMiddleware, createStore} from 'redux';
 import {
@@ -12,49 +12,21 @@ import {
   ApolloLink,
   HttpLink } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
-import { ReduxTesting as Apples } from './reduxTraining'
+import { ReduxTesting as Apples } from './Components/reduxTraining'
 import thunk from 'redux-thunk'  
+import Login from './Chat-App/Containers/login'
 
-const testReducer = ( state , action )=>{
-
-  switch(action.type) {
-
-    case "ADD_APPLE":
-      return state.concat(action.payload);
-
-    case "DELETE_APPLE":
-      return state.filter((apple)=> apple != action.payload );
-
-    default:
-      return state; 
-
-  }
-
-}
-
-const loggingMiddleware = (store) => (next) => (action) => {
-   
-
-  next({...action,payload:[action.payload , action.payload ]})
-
-}
-
-const store = createStore( testReducer , ["APPL1"]  , applyMiddleware(loggingMiddleware));
-
-const setAuthorizationLink = new ApolloLink( ( operation , forward )=>{
-
-   return forward(operation);
-
-});
 
 const httpTerminatingLink = new HttpLink({
   uri:"http://localhost:8000/graphql"
 });
 
 const client = new ApolloClient({
-  link:setAuthorizationLink.concat(httpTerminatingLink),
+  link:httpTerminatingLink,
   cache: new InMemoryCache()
 })
+
+const store = createStore(()=>{},{});
 
 
 function App() {
@@ -64,7 +36,9 @@ function App() {
     <ApolloProvider client = {client} >
 
       <Provider store={store}>
-          <Apples/>
+     
+          <Login/>
+
       </Provider>
        
     </ApolloProvider>

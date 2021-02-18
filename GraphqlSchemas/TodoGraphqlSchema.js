@@ -1,5 +1,5 @@
 const { gql , makeExecutableSchema } = require('apollo-server')
-const TodoModel = require('./schema');
+const TodoModel = require('../Models/TodoModel');
 
 const typeDefs = `
 

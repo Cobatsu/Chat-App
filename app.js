@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { ApolloServer } = require('apollo-server')
-const schema = require('./TypesAndResolvers');
+const schema = require('./GraphqlSchemas');
 require('dotenv').config();
 const _Url = process.env.DB_URL
 

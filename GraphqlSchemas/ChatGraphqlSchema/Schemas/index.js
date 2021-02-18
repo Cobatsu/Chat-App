@@ -1,0 +1,1 @@
+const loginResolver = require('./UserSchema');
