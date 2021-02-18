@@ -3,7 +3,7 @@ import './App.css';
 import React , {useEffect,useState} from 'react';
 import ToDoList from './Todo'
 import {Provider} from 'react-redux'
-import {createStore} from 'redux';
+import {applyMiddleware, createStore} from 'redux';
 import {
   ApolloProvider ,
   ApolloClient ,
@@ -13,6 +13,7 @@ import {
   HttpLink } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 import { ReduxTesting as Apples } from './reduxTraining'
+import thunk from 'redux-thunk'  
 
 const testReducer = ( state , action )=>{
 
@@ -31,7 +32,14 @@ const testReducer = ( state , action )=>{
 
 }
 
-const store = createStore( testReducer , ["heyy"] );
+const loggingMiddleware = (store) => (next) => (action) => {
+   
+
+  next({...action,payload:[action.payload , action.payload ]})
+
+}
+
+const store = createStore( testReducer , ["APPL1"]  , applyMiddleware(loggingMiddleware));
 
 const setAuthorizationLink = new ApolloLink( ( operation , forward )=>{
 

@@ -7,15 +7,13 @@ export const ReduxTesting = ()=> {
     const dispatch  = useDispatch();
     let inputRef; 
 
-    console.log( "rerender" );
-
     return   <React.Fragment>
 
                 <input type="text" ref = {(ref)=> inputRef = ref }/>
                 <button onClick={()=> dispatch( { payload:inputRef.value ,type:"ADD_APPLE" } )}> ADD APPLE </button>
                 <ul>
                         {
-                            ( apples || [] ).map((apple)=>{ return <li key={ Math.random() }> {apple} </li> })
+                            ( apples ).map((apple)=>{ return <li key={ Math.random() }> {apple} </li> })
                         }
 
                 </ul>
