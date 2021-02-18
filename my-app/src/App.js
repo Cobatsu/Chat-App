@@ -2,6 +2,8 @@ import logo from './logo.svg';
 import './App.css';
 import React , {useEffect,useState} from 'react';
 import ToDoList from './Todo'
+import {Provider} from 'react-redux'
+import {createStore} from 'redux';
 import {
   ApolloProvider ,
   ApolloClient ,
@@ -10,12 +12,28 @@ import {
   ApolloLink,
   HttpLink } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
+import { ReduxTesting as Apples } from './reduxTraining'
 
+const testReducer = ( state , action )=>{
 
+  switch(action.type) {
+
+    case "ADD_APPLE":
+      return state.concat(action.payload);
+
+    case "DELETE_APPLE":
+      return state.filter((apple)=> apple != action.payload );
+
+    default:
+      return state; 
+
+  }
+
+}
+
+const store = createStore( testReducer , ["heyy"] );
 
 const setAuthorizationLink = new ApolloLink( ( operation , forward )=>{
-
-  console.log(operation);
 
    return forward(operation);
 
@@ -37,12 +55,10 @@ function App() {
      
     <ApolloProvider client = {client} >
 
-      <div style={{margin:'5% 0 0 30%' , width:'600px'}} >
-
-          <ToDoList/>
-
-      </div>
-     
+      <Provider store={store}>
+          <Apples/>
+      </Provider>
+       
     </ApolloProvider>
 
   );

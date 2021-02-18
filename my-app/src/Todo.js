@@ -41,7 +41,6 @@ mutation DeleteTodo($id:ID!) {
 
 `
 
-
 const ToDoList = ()=>{
 
     const { data  , loading , refetch  } = useQuery(GET_TODO);
@@ -67,8 +66,8 @@ const ToDoList = ()=>{
   
     if(error) return <h4> { error.message } </h4>
   
-    return <React.Fragment>
-  
+    return <div style={{margin:'5% 0 0 30%' , width:'600px'}} >
+      
       <div style={{width:'100%'}}> 
         
         <input placeholder="Title" ref={ title => refTitle = title }/>
@@ -95,7 +94,7 @@ const ToDoList = ()=>{
       </ul>
   
   
-    </React.Fragment>
+    </div>
     
     
   }
