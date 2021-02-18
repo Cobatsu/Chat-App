@@ -3,7 +3,7 @@ import React  from 'react';
 
 export const ReduxTesting = ()=> {
    
-    const apples = useSelector( state => { return state; } ,shallowEqual )  ;
+    const apples = useSelector( state => state , shallowEqual )  ;
     const dispatch  = useDispatch();
     let inputRef; 
 
