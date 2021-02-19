@@ -3,7 +3,8 @@ import React from 'react';
 import styled from 'styled-components';
 import {REGISTER_MUTATION} from '../GraphqQL/Mutations/AccountMutation';
 import {TitleImage} from './title-image'
-import {Link} from 'react-router-dom'
+import {Link , useHistory} from 'react-router-dom'
+
 
 const GeneralWrapper = styled.div`
 
@@ -18,15 +19,36 @@ width:100%;
 
 const InputBox = styled.input` margin-bottom:10px `
 
-const RegisterPage = ()=>{
+const RegisterPage = ( props )=>{
 
-    const [ register , { data , loading , error } ] = useMutation(REGISTER_MUTATION)
+    const history = useHistory();
 
-    let userNameRef;
-    let passwordRef;
-    let email;
+    const [ register , { data , loading , error } ] = useMutation(REGISTER_MUTATION , {
 
+            onCompleted:( { registerUser } )=>{
+
+                history.push(`/login/?username=${registerUser.username}`);
+
+            } , 
+
+            onError:(error)=>{ console.log(error); }
+
+    })
+
+    let userNameRef , passwordRef , email;  
+ 
     const onRegister = ()=>{
+
+        register({
+
+            variables:{
+                user:{
+                    username:userNameRef.value || null,
+                    email:email.value || null,
+                    password:passwordRef.value || null
+                }
+            }
+        })
 
     }
 
@@ -34,7 +56,9 @@ const RegisterPage = ()=>{
 
     <TitleImage text = "Register to the Group-Chat" />
 
-        { loading ? <h6> Giriş Yapılıyor </h6> : null }
+        { loading ? <h6> Registering... </h6> : null }
+        
+        { error ? <h6 style={{ color:"red"} } > Please Fill All Fields ! </h6> : null}
 
         <InputBox placeholder="Username" ref={ ref => userNameRef = ref } />
 

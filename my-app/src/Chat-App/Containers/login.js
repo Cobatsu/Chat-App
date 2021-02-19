@@ -4,7 +4,9 @@ import { useSelector , useDispatch } from 'react-redux';
 import { useQuery , useMutation , useSubscription , useLazyQuery } from '@apollo/client'
 import {LOGIN_QUERY} from '../GraphqQL/Queries/AccountQuery';
 import {TitleImage} from './title-image'
-import {Link} from 'react-router-dom'
+import {Link , useLocation } from 'react-router-dom'
+import queryString from 'querystring'
+
 
 const GeneralWrapper = styled.div`
 
@@ -20,12 +22,31 @@ width:100%;
 const InputBox = styled.input` margin-bottom:10px `
 
 
-const LoginPage = ()=>{
+const LoginPage = ( props )=>{
 
-    const [ login , { data , loading , error }] = useLazyQuery(LOGIN_QUERY);
+    const dispatch = useDispatch();
+    const errorState = useSelector( ( state = {} ) => state.error );
 
-    let userNameRef;
-    let passwordRef;
+    const location = useLocation() ; 
+
+    const { username } = queryString.parse(location.search.slice(1)) ; 
+
+    var userNameRef , passwordRef;
+
+    const [ login , { data , loading , error }] = useLazyQuery(LOGIN_QUERY , {
+
+        onCompleted:({ loginUser })=>{
+
+            localStorage.setItem('token',loginUser.jwt);
+
+            dispatch({
+                type:"SET_USER",
+                payload:loginUser
+            }); 
+
+        },
+
+    });
 
     const onLogin = ()=>{
 
@@ -43,10 +64,18 @@ const LoginPage = ()=>{
     return <GeneralWrapper>
 
         <TitleImage text = "Welcome To The Group-Chat !" />
+        
+        { username ? <h5 style={{
+            color:"green"
+        }}> You Registered. Lets Sign In ! </h5> : null }
 
-        { loading ? <h6> Giriş Yapılıyor </h6> : null }
+        { loading ? <h6> Giriş Yapılıyor </h6> : 
+          error ?   <h6 style={{
+              color:"red"
+          }}> { errorState.message + errorState.errorType } </h6> : null
+        }
 
-        <InputBox placeholder="Username" ref={ ref => userNameRef = ref } />
+        <InputBox placeholder="Username" ref={ ref => userNameRef = ref } value={ username } />
 
         <InputBox placeholder="Password" ref={ ref => passwordRef = ref } type="password" />
         
