@@ -40,7 +40,7 @@ const registerResolver = {
 
      registerUser:async (parent, args, context)=>{
 
-         console.log(args);
+         console.log(args,"alikjdhaksd");
 
          const newUser = new UserModel({
                 username:args.user.username,

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer ,AuthenticationError } = require('apollo-server');
 const schema = require('./GraphqlSchemas/ChatGraphqlSchema/index')
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -11,28 +11,20 @@ mongoose.connect(_Url,{ useUnifiedTopology: true,useNewUrlParser: true })
 
 const server = new ApolloServer( { schema , context:async ({req})=>{
 
-    // const token = req.headers['authorization'].split(' ')[1];       
-    // const { operationName } = req.body;
+    const token = req.headers['authorization'].split(' ')[1];       
 
-    // if(token) {
+        try {
 
-    //      const user = await jwt.verify(token);
-    //      req.user = user;
+            const user = await jwt.verify(token);
 
-    // } else {
+            return { user }
 
-    //     if( operationName == "Login" ||  operationName == "Register") {
+        } catch {
 
-    //             return ;
+            return { user:null }
 
-    //     } else { 
+        }
             
-    //             throw new Error("Access Denied");
-
-    //     }
-
-    // }
-
 }} );
 
 server.listen('8000').then(({ url }) => {

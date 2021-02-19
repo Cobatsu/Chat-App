@@ -11,9 +11,9 @@ type User {
 }
 
 input RegisterInput {
-    username:String !
-    password:String !
-    email:String !
+    username:String!
+    password:String!
+    email:String!
 }
 
 input LoginInput {

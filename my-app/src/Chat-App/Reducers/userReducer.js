@@ -2,7 +2,6 @@
 const UserReducer = ( state , action )=>{
  
     
-
     switch( action.type ) {
 
         case "SET_USER": 
@@ -20,9 +19,16 @@ const UserReducer = ( state , action )=>{
             }
             
 
-        default: 
+        case "LOGOUT": 
 
-            return state
+            return {
+                user:{},
+                error:{}
+            }    
+        
+        default: 
+             
+            break;
 
     }
 

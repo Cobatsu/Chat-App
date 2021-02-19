@@ -19,6 +19,7 @@ import { onError } from "apollo-link-error";
 import Login from './Chat-App/Containers/login'
 import Register from './Chat-App/Containers/register'
 import UserReducer from './Chat-App/Reducers/userReducer'
+import MainPage from './Chat-App/Containers/main-page';
 
 const httpTerminatingLink = new HttpLink({
   uri:"http://localhost:8000/graphql"
@@ -30,16 +31,21 @@ const store = createStore(UserReducer,initalState);
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
 
-  if (graphQLErrors)
 
-      store.dispatch({
-        type:'SET_ERROR',
-        payload:{
-          message:graphQLErrors[0].message,
-          errorType:"[GraphQL Error] "
-        }
+  if (graphQLErrors) {
 
-      })
+    
+    store.dispatch({
+      
+      type:'SET_ERROR',
+      payload:{
+        message:graphQLErrors[0].message,
+        errorType:"[GraphQL Error] "
+      }
+
+    })
+
+  }
 
   if (networkError) {
     
@@ -55,8 +61,24 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 });
 
+const middleWareLink = new ApolloLink( ( operation , forward )=>{
+
+  const token = localStorage.getItem('token');
+  
+  operation.setContext({
+    headers: {
+      ...operation.getContext().headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
+  })
+
+  return forward(operation);
+
+})
+
 const client = new ApolloClient({
   link:from([
+    middleWareLink,
     errorLink,
     httpTerminatingLink
   ]),
@@ -70,12 +92,15 @@ function App() {
     <ApolloProvider client = {client} >
 
       <BrowserRouter>
+
         <Provider store={store}>
 
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/main-page" component={MainPage} />
 
         </Provider>
+        
       </BrowserRouter>
 
        

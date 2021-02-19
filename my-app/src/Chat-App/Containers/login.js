@@ -4,7 +4,7 @@ import { useSelector , useDispatch } from 'react-redux';
 import { useQuery , useMutation , useSubscription , useLazyQuery } from '@apollo/client'
 import {LOGIN_QUERY} from '../GraphqQL/Queries/AccountQuery';
 import {TitleImage} from './title-image'
-import {Link , useLocation } from 'react-router-dom'
+import {Link , useHistory, useLocation } from 'react-router-dom'
 import queryString from 'querystring'
 
 
@@ -26,6 +26,7 @@ const LoginPage = ( props )=>{
 
     const dispatch = useDispatch();
     const errorState = useSelector( ( state = {} ) => state.error );
+    const history = useHistory();
 
     const location = useLocation() ; 
 
@@ -44,6 +45,8 @@ const LoginPage = ( props )=>{
                 payload:loginUser
             }); 
 
+            history.push('/main-page');
+
         },
 
     });
@@ -53,8 +56,8 @@ const LoginPage = ( props )=>{
         login({
             variables:{
                 user:{
-                    username:userNameRef.value,
-                    password:passwordRef.value
+                    username:userNameRef.value || null,
+                    password:passwordRef.value || null
                 }
             }
         })
