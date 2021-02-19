@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
 
 
-const ChatUser = mongoose.Schema({
+const ChatUser = new mongoose.Schema({
 
-    userName:{
+    username:{
+        type:String,
+        required:true
+    },
+
+    email:{
         type:String,
         required:true
     },
@@ -13,7 +18,6 @@ const ChatUser = mongoose.Schema({
         required:true
     }
 
-
 })
 
-module.export = mongoose.model( 'ChatUser',ChatUser );
+module.exports = mongoose.model( 'ChatUser', ChatUser );

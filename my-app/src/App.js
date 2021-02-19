@@ -1,9 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 import React , {useEffect,useState} from 'react';
-import ToDoList from './Components/Todo'
 import {Provider} from 'react-redux'
 import {applyMiddleware, createStore} from 'redux';
+import { Route ,Link , Redirect , BrowserRouter } from 'react-router-dom'
 import {
   ApolloProvider ,
   ApolloClient ,
@@ -14,8 +14,10 @@ import {
 import { setContext } from '@apollo/client/link/context'
 import { ReduxTesting as Apples } from './Components/reduxTraining'
 import thunk from 'redux-thunk'  
-import Login from './Chat-App/Containers/login'
 
+import Login from './Chat-App/Containers/login'
+import Register from './Chat-App/Containers/register'
+import UserReducer from './Chat-App/Reducers/userReducer'
 
 const httpTerminatingLink = new HttpLink({
   uri:"http://localhost:8000/graphql"
@@ -26,8 +28,9 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 
-const store = createStore(()=>{},{});
+const initalState = { user:{} }
 
+const store = createStore(UserReducer,initalState);
 
 function App() {
 
@@ -35,11 +38,15 @@ function App() {
      
     <ApolloProvider client = {client} >
 
-      <Provider store={store}>
-     
-          <Login/>
+      <BrowserRouter>
+        <Provider store={store}>
 
-      </Provider>
+          <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
+
+        </Provider>
+      </BrowserRouter>
+
        
     </ApolloProvider>
 

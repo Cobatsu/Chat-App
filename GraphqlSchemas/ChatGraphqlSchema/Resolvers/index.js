@@ -1,2 +1,5 @@
-const loginResolver = require('./LoginResolver');
+const RegisterResolver = require('./AccountResolver');
 
+module.exports = [
+    RegisterResolver
+]

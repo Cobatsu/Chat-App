@@ -1,1 +1,5 @@
-const loginResolver = require('./UserSchema');
+const userShema = require('./UserSchema');
+
+module.exports = [
+    userShema
+]
