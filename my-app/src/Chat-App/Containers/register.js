@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {REGISTER_MUTATION} from '../GraphqQL/Mutations/AccountMutation';
 import {TitleImage} from './title-image'
 import {Link , useHistory} from 'react-router-dom'
-
+import { useSelector , useDispatch } from 'react-redux';
 
 const GeneralWrapper = styled.div`
 
@@ -22,6 +22,7 @@ const InputBox = styled.input` margin-bottom:10px `
 const RegisterPage = ( props )=>{
 
     const history = useHistory();
+    const errorState = useSelector( ( state = {} ) => state.error );
 
     const [ register , { data , loading , error } ] = useMutation(REGISTER_MUTATION , {
 
@@ -29,7 +30,7 @@ const RegisterPage = ( props )=>{
 
                 history.push(`/login/?username=${registerUser.username}`);
 
-            } , 
+            } ,
 
             onError:(error)=>{ console.log(error); }
 
@@ -58,7 +59,7 @@ const RegisterPage = ( props )=>{
 
         { loading ? <h6> Registering... </h6> : null }
         
-        { error ? <h6 style={{ color:"red"} } > Please Fill All Fields ! </h6> : null}
+        { error ? <h5 style={{ color:"red"} } > { errorState.errorType + " " + errorState.message } </h5> : null}
 
         <InputBox placeholder="Username" ref={ ref => userNameRef = ref } />
 

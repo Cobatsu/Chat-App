@@ -10,26 +10,28 @@ const registerResolver = {
     loginUser: async (_,args,context)=>{
 
         const user = await UserModel.findOne({username:args.user.username});
-        const token  = await jwt.sign( { username:user.username , email:user.email } , process.env.PRIVATE_KEY , {expiresIn:"1d"});
+
+        console.log(user);
 
         if(user) {
             
             if ( user.password === args.user.password ) {
 
-                return {...user,jwt:token};
+                const token  = await jwt.sign( { username:user.username , email:user.email } , process.env.PRIVATE_KEY , {expiresIn:"1d"});
+
+                return { ...user._doc , jwt:token }
 
             } else {
 
-                throw new Error("User is Not Valid");
+                throw new Error("Username or Password is Incorrect !");
 
             }
 
         } else {
 
-            throw new Error("User is Not Valid");
+            throw new Error("Username or Password is Incorrect !");
         }
 
-    
      }
         
  },
@@ -38,8 +40,10 @@ const registerResolver = {
 
      registerUser:async (parent, args, context)=>{
 
+         console.log(args);
+
          const newUser = new UserModel({
-                surname:args.user.surname,
+                username:args.user.username,
                 password:args.user.password,
                 email:args.user.email
          })

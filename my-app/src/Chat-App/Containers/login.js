@@ -70,9 +70,9 @@ const LoginPage = ( props )=>{
         }}> You Registered. Lets Sign In ! </h5> : null }
 
         { loading ? <h6> Giriş Yapılıyor </h6> : 
-          error ?   <h6 style={{
+          error ?   <h5 style={{
               color:"red"
-          }}> { errorState.message + errorState.errorType } </h6> : null
+          }}> { errorState.errorType + " " + errorState.message } </h5> : null
         }
 
         <InputBox placeholder="Username" ref={ ref => userNameRef = ref } value={ username } />

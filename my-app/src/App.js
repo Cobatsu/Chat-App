@@ -36,19 +36,20 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
         type:'SET_ERROR',
         payload:{
           message:graphQLErrors[0].message,
-          errorType:"[GraphQL Error]"
+          errorType:"[GraphQL Error] "
         }
+
       })
 
   if (networkError) {
     
-    store.dispatch({
-      type:'SET_ERROR',
-      payload:{
-        message:networkError,
-        errorType:"[Network Error]"
-      }
-    })
+      store.dispatch({
+        type:'SET_ERROR',
+        payload:{
+          message:networkError,
+          errorType:"[Network Error] "
+        }
+      })
 
   }
 

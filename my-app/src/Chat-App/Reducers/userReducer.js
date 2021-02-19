@@ -9,22 +9,14 @@ const UserReducer = ( state , action )=>{
 
             return {
                 ...state,
-                user:{
-                    username:action.payload.username,
-                    email:action.payload.email,
-                    _id:action.payload._id
-                },
+                user:action.payload,
             }
 
         case "SET_ERROR": 
 
             return {
                 ...state,
-                 error:{
-                     ...state.error,
-                     message:action.payload.message,
-                     type:action.payload.errorType,
-                 }
+                 error:action.payload
             }
             
 

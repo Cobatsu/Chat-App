@@ -10,28 +10,28 @@ mongoose.connect(_Url,{ useUnifiedTopology: true,useNewUrlParser: true })
 .catch((err)=>console.log(err));
 
 const server = new ApolloServer( { schema , context:async ({req})=>{
-    
-    const token = req.headers['authorization'].split(' ')[1];       
-    const { operationName } = req.body;
 
-    if(token) {
+    // const token = req.headers['authorization'].split(' ')[1];       
+    // const { operationName } = req.body;
 
-         const user = await jwt.verify(token);
-         req.user = user;
+    // if(token) {
 
-    } else {
+    //      const user = await jwt.verify(token);
+    //      req.user = user;
 
-        if( operationName == "Login" ||  operationName == "Register") {
+    // } else {
 
-                return ;
+    //     if( operationName == "Login" ||  operationName == "Register") {
 
-        } else { 
+    //             return ;
+
+    //     } else { 
             
-                throw new Error("Access Denied");
+    //             throw new Error("Access Denied");
 
-        }
+    //     }
 
-    }
+    // }
 
 }} );
 
