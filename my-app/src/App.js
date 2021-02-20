@@ -84,7 +84,7 @@ const middleWareLink = new ApolloLink( ( operation , forward )=>{
 
 })
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   link:from([
     middleWareLink,
     errorLink,
@@ -107,7 +107,7 @@ function App() {
 
                 <Route path="/login" component= { Login } />
                 <Route path="/register" component={ Register } />
-                
+
                 <PrivateRoute path="/main-page"  component = {MainPage} />
 
           </Switch>

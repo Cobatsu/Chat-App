@@ -1,3 +1,5 @@
+import { client } from '../../App'
+
 
 const UserReducer = ( state , action )=>{
  
@@ -20,8 +22,10 @@ const UserReducer = ( state , action )=>{
             
 
         case "LOGOUT": 
-        
+
             localStorage.removeItem('token');
+            client.clearStore();
+            
             return {
                 user:{},
                 error:{}
