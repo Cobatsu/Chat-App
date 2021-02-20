@@ -20,7 +20,8 @@ const UserReducer = ( state , action )=>{
             
 
         case "LOGOUT": 
-
+        
+            localStorage.removeItem('token');
             return {
                 user:{},
                 error:{}

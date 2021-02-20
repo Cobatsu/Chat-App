@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ApolloServer ,AuthenticationError } = require('apollo-server');
+const { ApolloServer , AuthenticationError , UserInputError , ForbiddenError  } = require('apollo-server');
 const schema = require('./GraphqlSchemas/ChatGraphqlSchema/index')
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -15,9 +15,11 @@ const server = new ApolloServer( { schema , context:async ({req})=>{
 
         try {
 
-            const user = await jwt.verify(token);
-
-            return { user }
+            const user = await jwt.verify(token,process.env.PRIVATE_KEY);
+            
+            return { 
+                user 
+            }
 
         } catch {
 

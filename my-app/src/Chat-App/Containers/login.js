@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
-import { useQuery , useMutation , useSubscription , useLazyQuery } from '@apollo/client'
+import {  useLazyQuery } from '@apollo/client'
 import {LOGIN_QUERY} from '../GraphqQL/Queries/AccountQuery';
 import {TitleImage} from './title-image'
 import {Link , useHistory, useLocation } from 'react-router-dom'

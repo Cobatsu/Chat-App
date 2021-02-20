@@ -64,9 +64,9 @@ const TextSpan = styled.span`
   margin:3px;
 `
 
-const MainPage = ()=>{
+const MainPage = ( props )=>{
 
-    const currentUser = useSelector(( state = {} ) => state.user );
+    const currentUser = useSelector(( state = {} ) => state.user || {} );
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -78,6 +78,7 @@ const MainPage = ()=>{
         history.push("/login");
 
     }
+
 
     return <GeneralWrapper> 
 

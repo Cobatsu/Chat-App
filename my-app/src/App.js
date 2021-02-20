@@ -1,9 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
-import React , {useEffect,useState} from 'react';
+import React  from 'react';
 import {Provider} from 'react-redux'
-import {applyMiddleware, createStore} from 'redux';
-import { Route ,Link , Redirect , BrowserRouter } from 'react-router-dom'
+import { createStore } from 'redux';
+import { Route ,Link , Redirect , BrowserRouter , useHistory , Switch} from 'react-router-dom'
 import {
   ApolloProvider ,
   ApolloClient ,
@@ -12,14 +12,14 @@ import {
   ApolloLink,
   HttpLink,
   from } from '@apollo/client'
-import { setContext  } from '@apollo/client/link/context'
-import { ReduxTesting as Apples } from './Components/reduxTraining'
-import thunk from 'redux-thunk'  
+
 import { onError } from "apollo-link-error";
 import Login from './Chat-App/Containers/login'
 import Register from './Chat-App/Containers/register'
 import UserReducer from './Chat-App/Reducers/userReducer'
 import MainPage from './Chat-App/Containers/main-page';
+import PrivateRoute from './Chat-App/Containers/privateRoute'
+
 
 const httpTerminatingLink = new HttpLink({
   uri:"http://localhost:8000/graphql"
@@ -29,35 +29,43 @@ const initalState = { user:{} , error:{} }
 
 const store = createStore(UserReducer,initalState);
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-
+const errorLink = onError(({ graphQLErrors, networkError , operation }) => {
+  
+  let errorType , message;
+  let { history } = operation.getContext();
 
   if (graphQLErrors) {
 
+    for (const el of graphQLErrors) {
+             
+         switch(el.extensions.code) {
+
+          case 'UNAUTHENTICATED': 
+                 store.dispatch({type:'LOGOUT'});
+                 history.push('/login');
+            break;
+          
+          case 'INTERNAL_SERVER_ERROR':
+                  message = "Empty Fields !"
+            break;
+         }
+
+         errorType = `[${el.extensions.code}]`;
+         message = message || el.message;
+
+    }
     
     store.dispatch({
-      
-      type:'SET_ERROR',
+      type:"SET_ERROR",
       payload:{
-        message:graphQLErrors[0].message,
-        errorType:"[GraphQL Error] "
+        errorType,
+        message
       }
-
     })
 
   }
 
-  if (networkError) {
-    
-      store.dispatch({
-        type:'SET_ERROR',
-        payload:{
-          message:networkError,
-          errorType:"[Network Error] "
-        }
-      })
-
-  }
+  if (networkError) { console.log(networkError) }
 
 });
 
@@ -85,22 +93,26 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 })
 
-function App() {
 
+function App() {
+   
   return (
      
     <ApolloProvider client = {client} >
 
       <BrowserRouter>
-
         <Provider store={store}>
 
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
-          <Route path="/main-page" component={MainPage} />
+          <Switch>
+
+                <Route path="/login" component= { Login } />
+                <Route path="/register" component={ Register } />
+                
+                <PrivateRoute path="/main-page"  component = {MainPage} />
+
+          </Switch>
 
         </Provider>
-        
       </BrowserRouter>
 
        

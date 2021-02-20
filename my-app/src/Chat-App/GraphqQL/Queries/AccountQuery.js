@@ -12,3 +12,16 @@ export const LOGIN_QUERY = gql`
     }
 
 `
+
+
+export const CHECK_TOKEN = gql`
+
+    query Check {
+         checkToken {
+            username
+            email
+            _id
+         }
+    }
+
+`

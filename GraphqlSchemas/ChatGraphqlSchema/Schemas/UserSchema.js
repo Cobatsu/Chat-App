@@ -30,6 +30,7 @@ type Mutation {
 type Query {
 
     loginUser(user:LoginInput!):User!
+    checkToken:User!
 
 }
 

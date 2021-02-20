@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+const { gql , AuthenticationError , UserInputError , ForbiddenError } = require('apollo-server');
 const  UserModel = require('../../../Models/ChatUserModel');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -7,29 +7,38 @@ const registerResolver = {
 
  Query: {
 
-    loginUser: async (_,args,context)=>{
+    checkToken: async (_,args,{user})=>{
 
+        if(!user) {
+            throw new AuthenticationError("INVALID TOKEN");
+        } else {
+            let currentUser = await UserModel.findById(user._id);
+            return currentUser;
+        }
+
+    },
+    
+    loginUser: async ( _,args,context )=>{
+        
         const user = await UserModel.findOne({username:args.user.username});
-
-        console.log(user);
 
         if(user) {
             
             if ( user.password === args.user.password ) {
 
-                const token  = await jwt.sign( { username:user.username , email:user.email } , process.env.PRIVATE_KEY , {expiresIn:"1d"});
+                const token  = await jwt.sign( { username:user.username , email:user.email , _id:user._id } , process.env.PRIVATE_KEY , {expiresIn:"1d"});
 
                 return { ...user._doc , jwt:token }
 
             } else {
 
-                throw new Error("Username or Password is Incorrect !");
+                throw new UserInputError("Username or Password is Incorrect !");
 
             }
 
         } else {
 
-            throw new Error("Username or Password is Incorrect !");
+            throw new UserInputError("Username or Password is Incorrect !");
         }
 
      }
@@ -39,8 +48,6 @@ const registerResolver = {
  Mutation:{
 
      registerUser:async (parent, args, context)=>{
-
-         console.log(args,"alikjdhaksd");
 
          const newUser = new UserModel({
                 username:args.user.username,
