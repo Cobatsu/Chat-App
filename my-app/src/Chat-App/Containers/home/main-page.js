@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
-import { useQuery , useMutation , useSubscription , useLazyQuery } from '@apollo/client'
-import {LOGIN_QUERY} from '../GraphqQL/Queries/AccountQuery';
-import {TitleImage} from './title-image'
-import {Link , useHistory, useLocation } from 'react-router-dom'
-import queryString from 'querystring'
+import {  useHistory } from 'react-router-dom'
+import UserRooms from './userRooms'
+import OtherRooms from './otherrooms'
+import { logout } from '../../Actions/action'// import RoomQuery from './roomQuery'
 
 const GeneralWrapper = styled.div`
     display:flex;
@@ -19,11 +18,13 @@ const GeneralWrapper = styled.div`
 const InnerDiv = styled.div`
 
     height:450px;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
     flex:0.75;
     display:flex;
-    justify-content:space-around;
-    align-items:stretch;
+    justify-content:space-evenly;
+    align-items:center;
+    box-sizing: border-box;
+    padding:10px;
 `
 
 const LogOut = styled.div`
@@ -54,13 +55,14 @@ const UserInformation = styled.div`
 
 const Profile = styled.div`
 
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
     height:450px;
     flex:0.20;
     display:flex;
     flex-direction:column;
     border-radius:8px;
     align-items:center;
+ 
 
 `
 const TextSpan = styled.span`
@@ -68,21 +70,6 @@ const TextSpan = styled.span`
     margin:3px;
 `
 
-const InnerOption = styled.div`
-
-    flex:1;
-    display:flex;
-    justify-content:center;
-    flex-direction:column;
-    align-items:center;  
-    cursor:pointer;
-    font-size:22px;
-    &:hover{
-        background:red;
-        color:white;
-    }
-
-`
 
 const MainPage = ( props )=>{
 
@@ -90,15 +77,13 @@ const MainPage = ( props )=>{
     const dispatch = useDispatch();
     const history = useHistory();
 
-
     const onLogout = ()=>{
 
         localStorage.removeItem('token');
-        dispatch({type:"LOGOUT"});
+        dispatch( logout() );
         history.push("/login");
 
     }
-
 
     return <GeneralWrapper> 
 
@@ -108,13 +93,12 @@ const MainPage = ( props )=>{
 
          <Profile>
             
-            <img src="/userpng.png" width="70%" style={{marginBottom:20 , marginTop:20}}/>
+            <img src="/userpng.png" width="60%" style={{marginBottom:20 , marginTop:20}}/>
 
             <UserInformation>
 
                   <TextSpan> username : {currentUser.username} </TextSpan>
                   <TextSpan> email : {currentUser.email} </TextSpan>  
-                  <TextSpan> room number :  </TextSpan>  
 
             </UserInformation>
         
@@ -122,8 +106,8 @@ const MainPage = ( props )=>{
 
          <InnerDiv> 
 
-                    
-
+                  <UserRooms/>
+                  <OtherRooms/>
          </InnerDiv>
     
     </GeneralWrapper>

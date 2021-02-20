@@ -23,13 +23,9 @@ const UserReducer = ( state , action )=>{
 
         case "LOGOUT": 
 
-            localStorage.removeItem('token');
-            client.clearStore();
-            
             return {
-                user:{},
-                error:{}
-            }    
+                ...action.payload
+            }   
         
         default: 
              

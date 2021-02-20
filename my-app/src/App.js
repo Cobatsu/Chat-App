@@ -17,9 +17,9 @@ import { onError } from "apollo-link-error";
 import Login from './Chat-App/Containers/login'
 import Register from './Chat-App/Containers/register'
 import UserReducer from './Chat-App/Reducers/userReducer'
-import MainPage from './Chat-App/Containers/main-page';
+import MainPage from './Chat-App/Containers/home/main-page';
 import PrivateRoute from './Chat-App/Containers/privateRoute'
-
+import { logout } from './Chat-App/Actions/action'
 
 const httpTerminatingLink = new HttpLink({
   uri:"http://localhost:8000/graphql"
@@ -41,7 +41,7 @@ const errorLink = onError(({ graphQLErrors, networkError , operation }) => {
          switch(el.extensions.code) {
 
           case 'UNAUTHENTICATED': 
-                 store.dispatch({type:'LOGOUT'});
+                 store.dispatch(logout());
                  history.push('/login');
             break;
           

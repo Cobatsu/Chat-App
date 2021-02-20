@@ -26,7 +26,7 @@ const PrivateRoute = ( { component:Component , ...rest } )=>{
               })
 
         } , 
-      
+ 
     })
 
     useEffect(()=>{
