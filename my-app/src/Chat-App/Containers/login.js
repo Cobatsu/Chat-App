@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
-import {  useLazyQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import {LOGIN_QUERY} from '../GraphqQL/Queries/AccountQuery';
 import {TitleImage} from './title-image'
 import {Link , useHistory, useLocation } from 'react-router-dom'
@@ -34,7 +34,7 @@ const LoginPage = ( props )=>{
 
     var userNameRef , passwordRef;
 
-    const [ login , { data , loading , error }] = useLazyQuery(LOGIN_QUERY , {
+    const [ login , { data , loading , error  }] = useLazyQuery(LOGIN_QUERY , {
 
         onCompleted:({ loginUser })=>{
 
@@ -50,7 +50,7 @@ const LoginPage = ( props )=>{
         },
 
     });
-
+  
     const onLogin = ()=>{
 
         login({

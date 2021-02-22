@@ -3,7 +3,7 @@ const  UserModel = require('../../../Models/ChatUserModel');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const registerResolver = {
+const accountResolver = {
 
  Query: {
 
@@ -65,4 +65,4 @@ const registerResolver = {
 
 }
 
-module.exports = registerResolver;
+module.exports = accountResolver;

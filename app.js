@@ -9,23 +9,35 @@ mongoose.connect(_Url,{ useUnifiedTopology: true,useNewUrlParser: true })
 .then(()=>console.log('connected to DB'))
 .catch((err)=>console.log(err));
 
-const server = new ApolloServer( { schema , context:async ({req})=>{
+const server = new ApolloServer( { schema , 
+  subscriptions: {
+        path: '/subscriptions'
+  }  ,context:async ( { req , connection } )=>{
 
-    const token = req.headers['authorization'].split(' ')[1];       
+    if(connection) {
 
-        try {
+        var token = connection.context.token
 
-            const user = await jwt.verify(token,process.env.PRIVATE_KEY);
-            
-            return { 
-                user 
-            }
+    } else {
 
-        } catch {
+       var token = req.headers['authorization'].split(' ')[1];       
 
-            return { user:null }
+    }
+    
+    try {
 
+        const user = await jwt.verify(token,process.env.PRIVATE_KEY);
+        
+        return { 
+            user 
         }
+
+    } catch {
+
+        return { user:null }
+
+    }
+
             
 }} );
 

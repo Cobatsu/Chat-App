@@ -14,7 +14,7 @@ export const LOGIN_QUERY = gql`
 `
 
 
-export const CHECK_TOKEN = gql`
+export const CHECK_TOKEN_QUERY = gql`
 
     query Check {
          checkToken {

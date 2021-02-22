@@ -11,7 +11,8 @@ import {
   InMemoryCache,
   ApolloLink,
   HttpLink,
-  from } from '@apollo/client'
+  from,
+  split } from '@apollo/client'
 
 import { onError } from "apollo-link-error";
 import Login from './Chat-App/Containers/login'
@@ -20,16 +21,40 @@ import UserReducer from './Chat-App/Reducers/userReducer'
 import MainPage from './Chat-App/Containers/home/main-page';
 import PrivateRoute from './Chat-App/Containers/privateRoute'
 import { logout } from './Chat-App/Actions/action'
+import { WebSocketLink } from '@apollo/client/link/ws';
+import { getMainDefinition } from '@apollo/client/utilities';
 
 const httpTerminatingLink = new HttpLink({
   uri:"http://localhost:8000/graphql"
+});
+
+const wsLink = new WebSocketLink({
+  uri: "ws://localhost:8000/subscriptions",
+  options: {
+    reconnect: true,
+    connectionParams:{
+      token:localStorage.getItem('token'),
+    }
+  }
 });
 
 const initalState = { user:{} , error:{} }
 
 const store = createStore(UserReducer,initalState);
 
-const errorLink = onError(({ graphQLErrors, networkError , operation }) => {
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpTerminatingLink,
+);
+
+const errorLink = onError(({ graphQLErrors, networkError , operation }) => { // only runs when server respones
   
   let errorType , message;
   let { history } = operation.getContext();
@@ -45,9 +70,6 @@ const errorLink = onError(({ graphQLErrors, networkError , operation }) => {
                  history.push('/login');
             break;
           
-          case 'INTERNAL_SERVER_ERROR':
-                  message = "Empty Fields !"
-            break;
          }
 
          errorType = `[${el.extensions.code}]`;
@@ -88,7 +110,7 @@ export const client = new ApolloClient({
   link:from([
     middleWareLink,
     errorLink,
-    httpTerminatingLink
+    splitLink
   ]),
   cache: new InMemoryCache()
 })

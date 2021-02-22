@@ -2,21 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 import {  useHistory } from 'react-router-dom'
-
+import {useSubscription} from '@apollo/client'
+import { ROOM_SUBSCRIPTION } from '../../GraphqQL/Mutations/CatchRoomMutation'
 
 const Container = styled.div`
-
-    display:flex;
-    flex-direction:column;
-    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-    width:40%;
-    height:90%;
-    padding:15px;
-    box-sizing: border-box;
-
-`
-
-const Title = styled.span`
+padding:15px;
+display:flex;
+flex-direction:column;
+box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+width:40%;
+height:90%;
+box-sizing: border-box;
 
 `
 const Rooms = styled.div`
@@ -28,12 +24,21 @@ height:100%;
 
 const OtherRooms = ()=>{
 
+        const { data , loading } = useSubscription(ROOM_SUBSCRIPTION);
+
         return (
 
                 <Container>
 
-                        <Title> Other Rooms </Title>
-                        <Rooms/>
+                        <span style={{textAlign:"center"}} > Other Rooms </span>
+
+                        <Rooms>
+                                {
+                                        ( !loading  && data ) && 
+                                        
+                                        data.roomCreated.title + " " +  data.roomCreated.limit
+                                }
+                        </Rooms>
 
                 </Container>
 
