@@ -30,10 +30,14 @@ const chatRoomResolver = {
 
         joinRoom: async (_, { roomID } , { user } )=>{
 
+                console.log(user);
 
                 pubsub.publish('MEMBER_JOINED_ROOM',{
-                    ...user,
-                    roomID
+
+                    memberJoined:{
+                        ...user
+                    }
+                  
                 })
 
                 const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
@@ -47,9 +51,15 @@ const chatRoomResolver = {
         host:async (parent,args, { user })=>{
 
             const result = await User.findById(parent.host);
-
             return result
 
+        },
+
+        members: async (parent,args, { user })=>{
+
+            const result = await User.find( { _id: { $in: [...parent.members] } });
+            return result
+            
         }
 
     },
@@ -80,13 +90,8 @@ const chatRoomResolver = {
     
     Subscription: {
         memberJoined: {
-           subscribe:withFilter( 
-            () => pubsub.asyncIterator(['MEMBER_JOINED_ROOM']) ,  
-            (payload,{roomID})=> { 
-
-                return roomID == payload.roomID
-
-            })
+            
+            subscribe: () => pubsub.asyncIterator(['MEMBER_JOINED_ROOM'])
         
         }
     }

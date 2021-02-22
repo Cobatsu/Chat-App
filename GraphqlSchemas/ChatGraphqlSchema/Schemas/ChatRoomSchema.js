@@ -16,7 +16,7 @@ input RoomInput {
 }
 
 type Subscription {
-    memberJoined(roomID:ID!): User!
+    memberJoined: User!
 }
 
 extend type Query{

@@ -28,6 +28,7 @@ export const GET_OTHER_ROOMS_QUERY = gql`
             }
             members {
                 username
+                _id
             }
         }
     }

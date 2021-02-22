@@ -1,10 +1,10 @@
-import React , {useEffect} from 'react';
+import React , {useEffect,useState} from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 import {  useHistory } from 'react-router-dom'
 import { useSubscription , useQuery , useMutation } from '@apollo/client'
 import { GET_OTHER_ROOMS_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
-import { JOIN_ROOM_MUTATION } from '../../GraphqQL/Mutations/CatchRoomMutation'
+import { JOIN_ROOM_MUTATION , MEMBER_JOINED_ROOM } from '../../GraphqQL/Mutations/CatchRoomMutation'
 
 
 const Container = styled.div`
@@ -52,14 +52,14 @@ left:0;
 const OtherRooms = ()=>{
 
         const { data , loading , error , refetch , subscribeToMore } = useQuery(GET_OTHER_ROOMS_QUERY, {
-               fetchPolicy:"network-only",
+              
                notifyOnNetworkStatusChange: true,
         })
 
-        const [ join ]  = useMutation(JOIN_ROOM_MUTATION, {
-                fetchPolicy:"network-only",
-        })
+        console.log(data);
 
+        const [ join ]  = useMutation(JOIN_ROOM_MUTATION)
+        const [selectedId , setSelectedId] = useState("");
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
         const reFresh = ()=> { 
@@ -69,16 +69,44 @@ const OtherRooms = ()=>{
         }
 
         const joinRoom = (id)=>(e)=>{
+
+                setSelectedId(id)
                 join({
                         variables:{
                                 roomID:id
                         }
                 })
+
         }
 
         useEffect(()=>{
 
-             
+                subscribeToMore({
+                        document:MEMBER_JOINED_ROOM,
+                        updateQuery:(prev, { subscriptionData } )=>{
+
+                            if (!subscriptionData.data) return prev;
+                      
+                            const newData = prev.getOtherRooms.map((obj)=>{
+                     
+                                        if( obj._id == selectedId ) {
+
+                                               return {
+                                                        ...obj,
+                                                        members:[...obj.members,subscriptionData.data.memberJoined]
+                                                }
+
+                                        } else {
+
+                                                return obj;
+
+                                        }
+
+                            }) ;
+
+                            return newData;
+                        }
+                })
 
         },[])
 
