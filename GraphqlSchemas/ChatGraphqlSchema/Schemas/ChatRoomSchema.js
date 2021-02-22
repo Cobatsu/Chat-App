@@ -16,15 +16,17 @@ input RoomInput {
 }
 
 type Subscription {
-    roomCreated: Room!
+    memberJoined(roomID:ID!): User!
 }
 
 extend type Query{
     getUserRooms:[Room!]!
+    getOtherRooms:[Room!]!
 }
 
 extend type Mutation {
     createRoom(room:RoomInput!) : Room!
+    joinRoom(roomID:ID!) : Room!
 }
 
 `

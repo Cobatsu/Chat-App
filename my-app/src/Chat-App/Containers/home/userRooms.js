@@ -36,7 +36,7 @@ align-items:center;
         box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
         cursor:pointer
 }
-transition:150ms;
+
 
 `
 
@@ -46,6 +46,7 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
                 fetchPolicy:"network-only",
         })
 
+        const storeError = useSelector( ( state = {} ) => state.error ); 
 
         if(timeToRefetch) {
 
@@ -57,7 +58,6 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
         }
 
-        const storeError = useSelector( ( state = {} ) => state.error ); 
 
         return (
 
@@ -77,13 +77,13 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
                                         <InnerRooms key={room._id} >
 
-                                                <span>   
-                                                        <i style={{marginRight:8 , color:"#1687a7" }} className="fas fa-comment"></i>
-                                                        {room.title}
+                                                <span style={{display:'flex',alignItems:'center'}} >   
+                                                        <i style={{marginRight:8 , color:"#f05454" }} className="fas fa-comment"></i>
+                                                        {room.title} 
                                                 </span>
 
-                                                <span>
-                                                        <i style={{marginRight:8 , color:"#1687a7"}} className="fas fa-user-friends"></i>
+                                                <span style={{display:'flex',alignItems:'center',width:'60px',justifyContent:'space-between'}}>
+                                                        <i style={{marginRight:8 , color:"#f05454" }} className="fas fa-user-friends"></i>
                                                         {room.limit + "/" + room.members.length }                              
                                                 </span>
 

@@ -14,3 +14,22 @@ export const GET_USER_ROOMS_QUERY = gql`
     }
 
 `
+  
+export const GET_OTHER_ROOMS_QUERY = gql`
+
+    query GetOtherRooms{
+        getOtherRooms {
+            _id
+            limit
+            title
+            host{
+                username
+                _id
+            }
+            members {
+                username
+            }
+        }
+    }
+
+`

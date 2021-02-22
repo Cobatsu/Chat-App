@@ -1,6 +1,6 @@
 import {gql} from '@apollo/client'
 
-export const CREATE_ROOM_QUERY = gql`
+export const CREATE_ROOM_MUTATION = gql`
 
     mutation CreateRoom($room:RoomInput!){
 
@@ -13,11 +13,23 @@ export const CREATE_ROOM_QUERY = gql`
     
 `
 
-export const ROOM_SUBSCRIPTION = gql`
-    subscription RoomCReated {
-        roomCreated {
-        limit
-        title
+export const JOIN_ROOM_MUTATION = gql`
+    mutation JoinRoom($roomID:ID!) {
+        joinRoom(roomID:$roomID) {
+            _id,
+            title,
+            limit
         }
     }
+`
+
+export const MEMBER_JOINED_ROOM = gql`
+
+    subscription MemberJoined {
+        memberJoined {
+            username
+            _id
+        }
+    }
+
 `

@@ -6,7 +6,7 @@ import UserRooms from './userRooms'
 import OtherRooms from './otherrooms'
 import { logout } from '../../Actions/action'// import RoomQuery from './roomQuery'
 import { useMutation } from '@apollo/client'
-import { CREATE_ROOM_QUERY } from '../../GraphqQL/Mutations/CatchRoomMutation'
+import { CREATE_ROOM_MUTATION  } from '../../GraphqQL/Mutations/CatchRoomMutation'
 
 const GeneralWrapper = styled.div`
     display:flex;
@@ -104,12 +104,12 @@ const MainPage = ( props )=>{
 
     const currentUser = useSelector(( state = {} ) => state.user || {} );
 
-    const [ create , { data , loading , error } ]= useMutation(CREATE_ROOM_QUERY);
-
-    let limit , title;
+    const [ create , { data , loading , error } ] = useMutation(CREATE_ROOM_MUTATION);
     const dispatch = useDispatch();
     const history = useHistory();
     const [ timeToRefetch , setTimeToRefetch ] = useState(false);
+
+    let limit , title;
 
     const onLogout = ()=>{
 
