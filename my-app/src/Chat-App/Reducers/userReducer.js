@@ -28,7 +28,9 @@ const UserReducer = ( state , action )=>{
             }   
         
         default: 
-             
+
+            return state
+            
             break;
 
     }

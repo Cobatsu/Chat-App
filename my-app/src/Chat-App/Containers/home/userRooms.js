@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useEffect} from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 import {  useHistory } from 'react-router-dom'
@@ -40,11 +40,23 @@ transition:150ms;
 
 `
 
-const UserRooms = ()=>{
+const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
-        const { data , loading , error  } = useQuery(GET_USER_ROOMS_QUERY, {
-                fetchPolicy:"network-only"
+        const { data , loading , error , refetch  } = useQuery(GET_USER_ROOMS_QUERY, {
+                fetchPolicy:"network-only",
         })
+
+
+        if(timeToRefetch) {
+
+            refetch().then(()=>{
+
+               setTimeToRefetch(false);
+
+            })
+
+        }
+
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
         return (
@@ -63,15 +75,15 @@ const UserRooms = ()=>{
 
                                         return (
 
-                                        <InnerRooms>
+                                        <InnerRooms key={room._id} >
 
                                                 <span>   
-                                                        <i style={{marginRight:8 , color:"#1687a7" }} class="fas fa-comment"></i>
+                                                        <i style={{marginRight:8 , color:"#1687a7" }} className="fas fa-comment"></i>
                                                         {room.title}
                                                 </span>
 
                                                 <span>
-                                                        <i style={{marginRight:8 , color:"#1687a7"}} class="fas fa-user-friends"></i>
+                                                        <i style={{marginRight:8 , color:"#1687a7"}} className="fas fa-user-friends"></i>
                                                         {room.limit + "/" + room.members.length }                              
                                                 </span>
 

@@ -14,10 +14,10 @@ export const CREATE_ROOM_QUERY = gql`
 `
 
 export const ROOM_SUBSCRIPTION = gql`
-  subscription RoomCReated {
-    roomCreated {
-      limit
-      title
+    subscription RoomCReated {
+        roomCreated {
+        limit
+        title
+        }
     }
-  }
 `

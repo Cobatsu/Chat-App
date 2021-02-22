@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState} from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 import {  useHistory } from 'react-router-dom'
@@ -103,10 +103,13 @@ margin-top:20px;
 const MainPage = ( props )=>{
 
     const currentUser = useSelector(( state = {} ) => state.user || {} );
+
     const [ create , { data , loading , error } ]= useMutation(CREATE_ROOM_QUERY);
+
     let limit , title;
     const dispatch = useDispatch();
     const history = useHistory();
+    const [ timeToRefetch , setTimeToRefetch ] = useState(false);
 
     const onLogout = ()=>{
 
@@ -125,6 +128,8 @@ const MainPage = ( props )=>{
                     limit: parseInt( limit.value )
                 }
             }
+        }).then(()=>{
+                    setTimeToRefetch(true);
         })
 
     }
@@ -188,7 +193,7 @@ const MainPage = ( props )=>{
 
          <InnerDiv> 
 
-                  <UserRooms/>
+                  <UserRooms timeToRefetch = {timeToRefetch}  setTimeToRefetch = {setTimeToRefetch}/>
                   <OtherRooms/>
                   
          </InnerDiv>
