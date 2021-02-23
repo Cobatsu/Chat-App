@@ -27,7 +27,11 @@ export const MEMBER_JOINED_ROOM = gql`
 
     subscription MemberJoined {
         memberJoined {
-            _id
+            user {
+                username
+                _id
+            }
+            roomID
         }
     }
 

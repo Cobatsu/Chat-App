@@ -111,6 +111,8 @@ const MainPage = ( props )=>{
 
     let limit , title;
 
+    console.log(loading)
+
     const onLogout = ()=>{
 
         localStorage.removeItem('token');
@@ -124,7 +126,7 @@ const MainPage = ( props )=>{
         create({
             variables:{
                 room:{
-                    title: title.value,
+                    title: title.value.toLowerCase(),
                     limit: parseInt( limit.value )
                 }
             }

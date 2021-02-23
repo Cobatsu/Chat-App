@@ -41,6 +41,6 @@ const server = new ApolloServer( { schema ,
             
 }} );
 
-server.listen('8000').then(({ url }) => {
+server.listen({port:8000}).then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
 });

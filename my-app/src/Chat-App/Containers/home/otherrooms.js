@@ -49,51 +49,56 @@ left:0;
 
 `
 
+
 const OtherRooms = ()=>{
 
-        const { data , loading , error , refetch , subscribeToMore } = useQuery(GET_OTHER_ROOMS_QUERY, {
-              
+        const { data , loading , error , refetch , subscribeToMore , networkStatus } = useQuery(GET_OTHER_ROOMS_QUERY, {
+               fetchPolicy:"network-only",
                notifyOnNetworkStatusChange: true,
         })
 
-        console.log(data);
+        
 
-        const [ join ]  = useMutation(JOIN_ROOM_MUTATION)
-        const [selectedId , setSelectedId] = useState("");
+        const [ join ]  = useMutation(JOIN_ROOM_MUTATION);
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
         const reFresh = ()=> { 
                 
-                refetch(); // refetch only allows the component rerender when data is loaded
+            refetch(); // refetch only allows the component rerender when data is loaded
 
         }
 
         const joinRoom = (id)=>(e)=>{
-
-                setSelectedId(id)
-                join({
-                        variables:{
-                                roomID:id
-                        }
-                })
+ 
+            join({
+                    variables:{
+                        roomID:id
+                     }
+               })
 
         }
 
         useEffect(()=>{
 
                 subscribeToMore({
+
                         document:MEMBER_JOINED_ROOM,
                         updateQuery:(prev, { subscriptionData } )=>{
 
                             if (!subscriptionData.data) return prev;
-                      
-                            const newData = prev.getOtherRooms.map((obj)=>{
-                     
-                                        if( obj._id == selectedId ) {
+                                
+                            const {memberJoined:{user,roomID}} = subscriptionData.data;
 
-                                               return {
+                            const newData = prev.getOtherRooms.map((obj,_)=>{
+
+                                        if( roomID == obj._id ) {
+
+                                                return { 
                                                         ...obj,
-                                                        members:[...obj.members,subscriptionData.data.memberJoined]
+                                                        members:[
+                                                                ...obj.members,
+                                                                user
+                                                        ]
                                                 }
 
                                         } else {
@@ -102,9 +107,11 @@ const OtherRooms = ()=>{
 
                                         }
 
-                            }) ;
+                            })  
 
-                            return newData;
+                            return {
+                                getOtherRooms:newData
+                            };
                         }
                 })
 
@@ -135,7 +142,7 @@ const OtherRooms = ()=>{
 
                                                 <span style={{display:'flex',alignItems:'center',justifyContent:'flex-start',flex:1}} >   
                                                         <i style={{marginRight:8 , color:"#00af91" }} className="fas fa-comment"></i>
-                                                        {room.title} 
+                                                        {room.title.length > 5 ? room.title.slice(0,5) + "..." : room.title} 
                                                 </span>
 
 

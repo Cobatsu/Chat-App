@@ -2,7 +2,7 @@ import React , {useEffect} from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 import {  useHistory } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
+import { useQuery , NetworkStatus } from '@apollo/client'
 import { GET_USER_ROOMS_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
 
 const Container = styled.div`
@@ -46,6 +46,7 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
                 fetchPolicy:"network-only",
         })
 
+
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
         if(timeToRefetch) {
@@ -79,7 +80,7 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
                                                 <span style={{display:'flex',alignItems:'center'}} >   
                                                         <i style={{marginRight:8 , color:"#f05454" }} className="fas fa-comment"></i>
-                                                        {room.title} 
+                                                        {room.title.length > 5 ? room.title.slice(0,5) + " ..." : room.title} 
                                                 </span>
 
                                                 <span style={{display:'flex',alignItems:'center',width:'60px',justifyContent:'space-between'}}>

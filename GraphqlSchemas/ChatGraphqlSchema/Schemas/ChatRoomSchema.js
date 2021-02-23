@@ -10,13 +10,18 @@ type Room {
     members:[User!]!
 }
 
+type RoomSubscripton {
+    user:User!
+    roomID:ID!
+}
+
 input RoomInput {
     limit:Int!
     title:String!
 }
 
 type Subscription {
-    memberJoined: User!
+    memberJoined: RoomSubscripton!
 }
 
 extend type Query{
