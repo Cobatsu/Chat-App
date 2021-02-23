@@ -39,9 +39,21 @@ const chatRoomResolver = {
                   
                 })
 
-                const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
+                const joinedRoom = await ChatRoom.findOne({_id:roomID});
 
-                return updated;
+                if( joinedRoom.members.length < joinedRoom.limit ) {
+
+                    const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
+
+                    return updated;
+
+                } else {
+
+                    throw new ForbiddenError( " Member Limit is Reached ! " );
+                    
+                }
+
+               
         }
 
     },

@@ -52,17 +52,17 @@ left:0;
 
 const OtherRooms = ()=>{
 
-        const { data , loading , error , refetch , subscribeToMore , networkStatus } = useQuery(GET_OTHER_ROOMS_QUERY, {
-               fetchPolicy:"network-only",
-               notifyOnNetworkStatusChange: true,
+        const { data , loading , error , refetch , subscribeToMore } = useQuery(GET_OTHER_ROOMS_QUERY, {
+               fetchPolicy:"network-only"
         })
 
+        const [ join ]  = useMutation(JOIN_ROOM_MUTATION , {
+                onError:(error)=>console.log(error)
+        });
         
-
-        const [ join ]  = useMutation(JOIN_ROOM_MUTATION);
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
-        const reFresh = ()=> { 
+        const reFresh = () => { 
                 
             refetch(); // refetch only allows the component rerender when data is loaded
 
@@ -93,13 +93,22 @@ const OtherRooms = ()=>{
 
                                         if( roomID == obj._id ) {
 
-                                                return { 
-                                                        ...obj,
-                                                        members:[
-                                                                ...obj.members,
-                                                                user
-                                                        ]
+                                                if( 1 + obj.members.length > obj.limit ) { // it is the limit
+
+                                                        return obj;
+
+                                                } else {
+
+                                                        return { 
+                                                                ...obj,
+                                                                members:[
+                                                                        ...obj.members,
+                                                                        user
+                                                                ]
+                                                        }
+
                                                 }
+                                               
 
                                         } else {
 
@@ -110,7 +119,7 @@ const OtherRooms = ()=>{
                             })  
 
                             return {
-                                getOtherRooms:newData
+                                getOtherRooms:newData // this data format must be the same as old one
                             };
                         }
                 })
@@ -152,7 +161,9 @@ const OtherRooms = ()=>{
                                                 </span>
 
 
-                                                <span style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'60px',flex:0.5}}>
+                                                <span style={{display:'flex',alignItems:'center',
+                                                color:room.members.length === room.limit ? 'red' : 'none'
+                                                ,justifyContent:'space-between',width:'60px',flex:0.5}}>
                                                         <i style={{marginRight:8 , color:"#00af91" }} className="fas fa-user-friends"></i>
                                                         {room.limit + "/" + room.members.length }                              
                                                 </span>

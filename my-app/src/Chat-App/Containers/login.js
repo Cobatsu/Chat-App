@@ -34,7 +34,7 @@ const LoginPage = ( props )=>{
 
     var userNameRef , passwordRef;
 
-    const [ login , { data , loading , error  }] = useLazyQuery(LOGIN_QUERY , {
+    const [ login , {  loading , error  }] = useLazyQuery(LOGIN_QUERY , {
 
         onCompleted:({ loginUser })=>{
 

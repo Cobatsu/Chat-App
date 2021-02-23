@@ -49,7 +49,7 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
-        if(timeToRefetch) {
+        if(timeToRefetch) { 
 
             refetch().then(()=>{
 
@@ -80,7 +80,7 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
                                                 <span style={{display:'flex',alignItems:'center'}} >   
                                                         <i style={{marginRight:8 , color:"#f05454" }} className="fas fa-comment"></i>
-                                                        {room.title.length > 5 ? room.title.slice(0,5) + " ..." : room.title} 
+                                                        {room.title.length > 10 ? room.title.slice(0,10) + " ..." : room.title} 
                                                 </span>
 
                                                 <span style={{display:'flex',alignItems:'center',width:'60px',justifyContent:'space-between'}}>

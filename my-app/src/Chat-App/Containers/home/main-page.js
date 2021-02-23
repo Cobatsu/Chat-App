@@ -104,14 +104,16 @@ const MainPage = ( props )=>{
 
     const currentUser = useSelector(( state = {} ) => state.user || {} );
 
-    const [ create , { data , loading , error } ] = useMutation(CREATE_ROOM_MUTATION);
+    const [ create , { loading , error } ] = useMutation(CREATE_ROOM_MUTATION , {
+        onError:(error)=>{ console.log(error) }
+    });
+    
     const dispatch = useDispatch();
     const history = useHistory();
+    const storeError = useSelector( ( state = {} ) => state.error);
     const [ timeToRefetch , setTimeToRefetch ] = useState(false);
 
     let limit , title;
-
-    console.log(loading)
 
     const onLogout = ()=>{
 
@@ -126,8 +128,8 @@ const MainPage = ( props )=>{
         create({
             variables:{
                 room:{
-                    title: title.value.toLowerCase(),
-                    limit: parseInt( limit.value )
+                    title: title.value.toLowerCase() || null,
+                    limit: parseInt( limit.value ) || null
                 }
             }
         }).then(()=>{
@@ -136,7 +138,11 @@ const MainPage = ( props )=>{
 
     }
 
-    return <GeneralWrapper> 
+    return   <React.Fragment>
+
+          { error &&  storeError.errorType + " " + storeError.message}  
+          
+        <GeneralWrapper> 
 
          <LogOut onClick={ onLogout } >
              LOG OUT
@@ -193,14 +199,16 @@ const MainPage = ( props )=>{
         
          </Profile>
 
-         <InnerDiv> 
-
+              
+         <InnerDiv>                            
                   <UserRooms timeToRefetch = {timeToRefetch}  setTimeToRefetch = {setTimeToRefetch}/>
                   <OtherRooms/>
                   
          </InnerDiv>
     
     </GeneralWrapper>
+
+     </React.Fragment>
 
 }
 

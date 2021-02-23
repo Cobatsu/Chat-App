@@ -87,7 +87,7 @@ const errorLink = onError(({ graphQLErrors, networkError , operation }) => { // 
 
   }
 
-  if (networkError) { console.log(networkError) }
+  if (networkError) { console.log(graphQLErrors) }
 
 });
 
