@@ -18,6 +18,16 @@ const ChatRoom = new mongoose.Schema({
         required:true
     },
 
+    messages:[
+
+        {
+            text:String,
+            ownder:mongoose.Schema.Types.ObjectId,
+            date:Date,
+        }
+
+    ],
+
     members:{
         type:Array,
         required:true

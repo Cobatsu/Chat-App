@@ -43,21 +43,26 @@ align-items:center;
 const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
         const { data , loading , error , refetch  } = useQuery(GET_USER_ROOMS_QUERY, {
-                fetchPolicy:"network-only",
+                fetchPolicy:"network-only",        
+                notifyOnNetworkStatusChange:true  
         })
 
 
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
-        if(timeToRefetch) { 
+        useEffect(()=>{
 
-            refetch().then(()=>{
+                if(timeToRefetch) {
 
-               setTimeToRefetch(false);
+                        refetch().then(()=>{
 
-            })
+                                setTimeToRefetch(false);
+                 
+                        })
 
-        }
+                }
+              
+        },[timeToRefetch])
 
 
         return (

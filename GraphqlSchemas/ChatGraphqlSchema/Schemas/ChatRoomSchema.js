@@ -8,6 +8,15 @@ type Room {
     title:String!
     host:User!
     members:[User!]!
+    messages:[Message!]!
+}
+
+type Message {
+
+    owner:ID!
+    text:String!
+    date:String!
+
 }
 
 type RoomSubscripton {
@@ -31,7 +40,7 @@ extend type Query{
 
 extend type Mutation {
     createRoom(room:RoomInput!) : Room!
-    joinRoom(roomID:ID!) : Room!
+    joinRoom(roomID:ID!,limit:Int!,memberLength:Int!) : Room!
 }
 
 `

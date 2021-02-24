@@ -19,6 +19,7 @@ import Login from './Chat-App/Containers/login'
 import Register from './Chat-App/Containers/register'
 import UserReducer from './Chat-App/Reducers/userReducer'
 import MainPage from './Chat-App/Containers/home/main-page';
+import Room from './Chat-App/Containers/home/room'
 import PrivateRoute from './Chat-App/Containers/privateRoute'
 import { logout } from './Chat-App/Actions/action'
 import { WebSocketLink } from '@apollo/client/link/ws';
@@ -130,7 +131,8 @@ function App() {
                 <Route path="/login" component= { Login } />
                 <Route path="/register" component={ Register } />
 
-                <PrivateRoute path="/main-page"  component = {MainPage} />
+                <PrivateRoute path="/main-page"  component = {MainPage} exact />
+                <PrivateRoute path="/room/:id"   component = {Room}  exact />
 
           </Switch>
 

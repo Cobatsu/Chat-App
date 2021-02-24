@@ -14,8 +14,8 @@ export const CREATE_ROOM_MUTATION = gql`
 `
 
 export const JOIN_ROOM_MUTATION = gql`
-    mutation JoinRoom($roomID:ID!) {
-        joinRoom(roomID:$roomID) {
+    mutation JoinRoom($roomID:ID!,$limit:Int!,$memberLength:Int!) {
+        joinRoom(roomID:$roomID,limit:$limit,memberLength:$memberLength) {
             _id,
             title,
             limit

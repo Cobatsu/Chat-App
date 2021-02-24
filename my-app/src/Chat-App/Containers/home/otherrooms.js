@@ -55,25 +55,34 @@ const OtherRooms = ()=>{
         const { data , loading , error , refetch , subscribeToMore } = useQuery(GET_OTHER_ROOMS_QUERY, {
                fetchPolicy:"network-only"
         })
-
-        const [ join ]  = useMutation(JOIN_ROOM_MUTATION , {
-                onError:(error)=>console.log(error)
-        });
         
+        const history = useHistory();
+        
+        const [ join ]  = useMutation(JOIN_ROOM_MUTATION , {
+
+                onError:(error)=> console.log(error) ,
+
+                onCompleted:({joinRoom})=>{
+
+                        history.push('/room/'+joinRoom._id);
+
+                }
+                
+        });
+
         const storeError = useSelector( ( state = {} ) => state.error ); 
 
-        const reFresh = () => { 
-                
-            refetch(); // refetch only allows the component rerender when data is loaded
 
-        }
-
-        const joinRoom = (id)=>(e)=>{
+        const joinRoom = (id,limit,memberLength)=>(e)=>{
  
-            join({
+                join({
+
                     variables:{
-                        roomID:id
+                        roomID:id,
+                        limit,
+                        memberLength
                      }
+
                })
 
         }
@@ -93,11 +102,7 @@ const OtherRooms = ()=>{
 
                                         if( roomID == obj._id ) {
 
-                                                if( 1 + obj.members.length > obj.limit ) { // it is the limit
-
-                                                        return obj;
-
-                                                } else {
+                                                if(   obj.members.length < obj.limit ) { // here is where we controll the members number
 
                                                         return { 
                                                                 ...obj,
@@ -110,11 +115,9 @@ const OtherRooms = ()=>{
                                                 }
                                                
 
-                                        } else {
+                                        } 
 
-                                                return obj;
-
-                                        }
+                                        return obj;
 
                             })  
 
@@ -133,7 +136,7 @@ const OtherRooms = ()=>{
                         <span style={{textAlign:"center",position:'relative'}} > 
                                 
                                 Other Rooms
-                                <Refresh onClick={reFresh} className="fas fa-sync" ></Refresh> 
+                                <Refresh onClick={()=>refetch()} className="fas fa-sync" ></Refresh> 
                         
                         </span>
 
@@ -147,7 +150,7 @@ const OtherRooms = ()=>{
 
                                         return (
 
-                                        <InnerRooms key={room._id} onClick={joinRoom(room._id)} >
+                                        <InnerRooms key={room._id} onClick={joinRoom(room._id,room.limit,room.members.length)} >
 
                                                 <span style={{display:'flex',alignItems:'center',justifyContent:'flex-start',flex:1}} >   
                                                         <i style={{marginRight:8 , color:"#00af91" }} className="fas fa-comment"></i>
@@ -162,7 +165,7 @@ const OtherRooms = ()=>{
 
 
                                                 <span style={{display:'flex',alignItems:'center',
-                                                color:room.members.length === room.limit ? 'red' : 'none'
+                                                color:room.members.length === room.limit ? 'red' : '#76a21e'
                                                 ,justifyContent:'space-between',width:'60px',flex:0.5}}>
                                                         <i style={{marginRight:8 , color:"#00af91" }} className="fas fa-user-friends"></i>
                                                         {room.limit + "/" + room.members.length }                              
