@@ -26,7 +26,7 @@ const ChatBox = styled.div`
     box-sizing: border-box;
     flex:0.5;
     margin-left:30px;
-    padding:20px;
+    padding:10px;
 
 `
 const Members = styled.div`
@@ -78,6 +78,8 @@ const Messages = styled.ul`
  flex-direction:column;
  list-style: none;
  padding:0;
+ overflow:scroll;
+ overflow-x: hidden;
 `
 
 const InnerMessage = styled.li`
@@ -86,7 +88,8 @@ const InnerMessage = styled.li`
  display:flex;
  list-style: none;
  justify-content:${( {checkOwner} )=> checkOwner ? 'flex-end' : 'flex-start'};
- padding:5px;
+ padding:5px 15px 5px 15px;
+ box-sizing: border-box;
 
 `
 
@@ -157,7 +160,7 @@ const Room = ({match})=>{
             
             <Members>
 
-                <span style={{color:"#845ec2"}}> GROUP MEMBERS </span>
+                <span style={{color:"#845ec2",fontWeight:"600",letterSpacing:1}}> GROUP MEMBERS </span>
 
                 <ul style={{ padding:0,listStyle:"none" , width:"50%" , marginTop:30 }}>
 
@@ -166,7 +169,7 @@ const Room = ({match})=>{
 
                             return (
 
-                            <li style={{padding:5,width:"100%",display:"flex",justifyContent:"center"}} key={member._id} > 
+                            <li style={{padding:5,width:"100%",display:"flex",fontSize:17.5,justifyContent:"center"}} key={member._id} > 
 
                                 {member.username} 
                                 <i class="fas fa-user" style={{color:"#f14668",marginLeft:14}}></i>
