@@ -67,7 +67,7 @@ const OtherRooms = ()=>{
                         history.push('/room/'+joinRoom._id);
 
                 }
-                
+
         });
 
         const storeError = useSelector( ( state = {} ) => state.error ); 
@@ -102,18 +102,13 @@ const OtherRooms = ()=>{
 
                                         if( roomID == obj._id ) {
 
-                                                if(   obj.members.length < obj.limit ) { // here is where we controll the members number
-
-                                                        return { 
-                                                                ...obj,
-                                                                members:[
-                                                                        ...obj.members,
-                                                                        user
-                                                                ]
-                                                        }
-
+                                                return { 
+                                                        ...obj,
+                                                        members:[
+                                                                ...obj.members,
+                                                                user
+                                                        ]
                                                 }
-                                               
 
                                         } 
 

@@ -30,16 +30,16 @@ const chatRoomResolver = {
 
         joinRoom: async (_, { roomID , memberLength , limit } , { user } )=>{
 
-                pubsub.publish('MEMBER_JOINED_ROOM',{
-
-                    memberJoined:{
-                        user,
-                        roomID
-                    }
-                  
-                })
-
                 if( memberLength < limit ) {
+
+                    pubsub.publish('MEMBER_JOINED_ROOM',{
+
+                        memberJoined:{
+                            user,
+                            roomID
+                        }
+                      
+                    })    
 
                     const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
 
