@@ -34,3 +34,27 @@ export const GET_OTHER_ROOMS_QUERY = gql`
     }
 
 `
+
+
+export const GET_CHAT_ROOM_QUERY = gql`
+
+    query GetChatRoom {
+
+        getChatRoom {
+
+            messages {
+                text
+                owner
+                date
+            }
+
+            members {
+                username
+                _id
+            }
+
+        }
+
+    }
+
+`

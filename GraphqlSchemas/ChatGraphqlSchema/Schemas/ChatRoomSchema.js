@@ -13,7 +13,7 @@ type Room {
 
 type Message {
 
-    owner:ID!
+    owner:User!
     text:String!
     date:String!
 
@@ -36,6 +36,7 @@ type Subscription {
 extend type Query{
     getUserRooms:[Room!]!
     getOtherRooms:[Room!]!
+    getChatRoom(roomID:ID!):Room!
 }
 
 extend type Mutation {

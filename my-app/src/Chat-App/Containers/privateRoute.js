@@ -40,7 +40,7 @@ const PrivateRoute = ( { component:Component , ...rest } )=>{
     
         component = { props => ( 
 
-            !loading && data ? <Component/> : null
+            !loading && data ? <Component {...props} /> : null
         
         ) } />
   

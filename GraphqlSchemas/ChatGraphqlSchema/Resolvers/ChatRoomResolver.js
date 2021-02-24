@@ -5,6 +5,46 @@ const User = require('../../../Models/ChatUserModel');
 const pubsub = new PubSub();
 
 const chatRoomResolver = {
+    
+    Query:{
+
+        getUserRooms:async (_, args , { user } )=>{
+
+            if(!user) {
+                throw new AuthenticationError("INVALID TOKEN");
+            } else {
+                const rooms = await ChatRoom.find({host:user._id})
+                return rooms;
+            }
+        } , 
+
+        getOtherRooms:async (_,args, { user })=>{
+
+            if(!user) {
+                throw new AuthenticationError("INVALID TOKEN");
+            } else {
+
+                const rooms = await ChatRoom.find({host:{$ne:user._id}})
+                return rooms;
+                
+            }
+        } ,
+
+
+        getChatRoom:async (_,args, { user} )=>{
+
+            if(!user) {
+                throw new AuthenticationError("INVALID TOKEN");
+            } else {
+
+                const chatRoom = await ChatRoom.findById(args.roomID);
+                return chatRoom;
+                
+            }
+        
+        }
+
+    },
 
     Mutation:{
 
@@ -68,34 +108,19 @@ const chatRoomResolver = {
             const result = await User.find( { _id: { $in: [...parent.members] } });
             return result
             
+        },
+
+    },
+
+    Message:{
+
+        owner: async (parent)=>{
+            const result = await User.findById(parent.owner)
+            return result;
         }
 
     },
-    Query:{
 
-        getUserRooms:async (_, args , { user } )=>{
-
-            if(!user) {
-                throw new AuthenticationError("INVALID TOKEN");
-            } else {
-                const rooms = await ChatRoom.find({host:user._id})
-                return rooms;
-            }
-        } , 
-
-        getOtherRooms:async (_,args, { user })=>{
-
-            if(!user) {
-                throw new AuthenticationError("INVALID TOKEN");
-            } else {
-
-                const rooms = await ChatRoom.find({host:{$ne:user._id}})
-                return rooms;
-                
-            }
-        }
-    },
-    
     Subscription: {
         memberJoined: {
             
