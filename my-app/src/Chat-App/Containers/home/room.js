@@ -24,9 +24,9 @@ const ChatBox = styled.div`
     justify-content:space-between;
     align-items:center;
     box-sizing: border-box;
-    flex:0.4;
+    flex:0.5;
     margin-left:30px;
-    padding:10px;
+    padding:20px;
 
 `
 const Members = styled.div`
@@ -76,23 +76,25 @@ const Messages = styled.ul`
  width:100%;
  display:flex;
  flex-direction:column;
+ list-style: none;
  padding:0;
- list-style:none;
-
 `
 
 const InnerMessage = styled.li`
 
  width:100%;
  display:flex;
+ list-style: none;
  justify-content:${( {checkOwner} )=> checkOwner ? 'flex-end' : 'flex-start'};
  padding:5px;
+
 `
 
 const TextBubble = styled.span`
  background:#03506f;
  color:white;
- padding:5px;
+ padding:8px;
+ border-radius:5px;
 
 `
 
@@ -121,8 +123,6 @@ const Room = ({match})=>{
         })
 
     }
-
-    console.log(data);
 
     useEffect(()=>{
 
@@ -159,14 +159,23 @@ const Room = ({match})=>{
 
                 <span style={{color:"#845ec2"}}> GROUP MEMBERS </span>
 
-                <ul style={{padding:0,listStyle:"none"}}>
+                <ul style={{ padding:0,listStyle:"none" , width:"50%" , marginTop:30 }}>
 
                     {
                         data && data.getChatRoom.members.map((member)=>{
 
-                            return <li key={member._id} > {member.username} </li>
+                            return (
 
-                        })
+                            <li style={{padding:5,width:"100%",display:"flex",justifyContent:"center"}} key={member._id} > 
+
+                                {member.username} 
+                                <i class="fas fa-user" style={{color:"#f14668",marginLeft:14}}></i>
+                                
+                                
+                            </li>
+
+                        )})
+                        
                     }
 
                 </ul>
@@ -186,7 +195,7 @@ const Room = ({match})=>{
 
                                             <TextBubble> 
 
-                                                {msg.text} 
+                                                {msg.text}
 
                                             </TextBubble>
 

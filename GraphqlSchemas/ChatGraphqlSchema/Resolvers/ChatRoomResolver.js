@@ -38,7 +38,7 @@ const chatRoomResolver = {
             } else {
 
                 const chatRoom = await ChatRoom.findById(args.roomID);
-                console.log(chatRoom);
+
                 return chatRoom;
                 
             }
