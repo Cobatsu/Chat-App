@@ -36,3 +36,36 @@ export const MEMBER_JOINED_ROOM = gql`
     }
 
 `
+
+export const SEND_MESSAGE_MUTATION = gql`
+
+    mutation SendMessage($text:String!,$roomID:ID!) {
+
+        sendMessage(text:$text,roomID:$roomID) {
+            
+            _id
+
+        }
+
+    }
+
+`
+
+export const MESSAGE_SENT = gql`
+
+    subscription MessageSent($roomID:ID!) {
+
+        messageSent(roomID:$roomID) {
+
+            text
+            date
+            owner {
+                username
+            }
+
+        }
+
+    }
+
+`
+

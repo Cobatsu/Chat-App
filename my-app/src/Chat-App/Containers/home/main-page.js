@@ -200,7 +200,8 @@ const MainPage = ( props )=>{
          </Profile>
 
               
-         <InnerDiv>                            
+         <InnerDiv>        
+                                 
                   <UserRooms timeToRefetch = {timeToRefetch}  setTimeToRefetch = {setTimeToRefetch}/>
                   <OtherRooms/>
                   

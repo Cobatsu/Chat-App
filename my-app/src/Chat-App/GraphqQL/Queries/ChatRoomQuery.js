@@ -38,13 +38,16 @@ export const GET_OTHER_ROOMS_QUERY = gql`
 
 export const GET_CHAT_ROOM_QUERY = gql`
 
-    query GetChatRoom {
+    query GetChatRoom($roomID:ID!) {
 
-        getChatRoom {
+        getChatRoom(roomID:$roomID) {
 
             messages {
                 text
-                owner
+                owner {
+                    username
+                    _id
+                }
                 date
             }
 

@@ -31,6 +31,7 @@ input RoomInput {
 
 type Subscription {
     memberJoined: RoomSubscripton!
+    messageSent(roomID:ID!):  Message!
 }
 
 extend type Query{
@@ -42,6 +43,7 @@ extend type Query{
 extend type Mutation {
     createRoom(room:RoomInput!) : Room!
     joinRoom(roomID:ID!,limit:Int!,memberLength:Int!) : Room!
+    sendMessage(text:String!,roomID:ID!) : Room!
 }
 
 `

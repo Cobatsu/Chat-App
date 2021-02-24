@@ -16,6 +16,7 @@ const Container = styled.div`
     width:40%;
     height:90%;
     box-sizing: border-box;
+    
 `
 
 

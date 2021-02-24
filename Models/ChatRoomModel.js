@@ -22,7 +22,7 @@ const ChatRoom = new mongoose.Schema({
 
         {
             text:String,
-            ownder:mongoose.Schema.Types.ObjectId,
+            owner:mongoose.Schema.Types.ObjectId,
             date:Date,
         }
 

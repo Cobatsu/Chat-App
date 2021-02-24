@@ -38,6 +38,7 @@ const chatRoomResolver = {
             } else {
 
                 const chatRoom = await ChatRoom.findById(args.roomID);
+                console.log(chatRoom);
                 return chatRoom;
                 
             }
@@ -58,6 +59,7 @@ const chatRoomResolver = {
                     ...room,
                     host:user._id,
                     memebers:[],
+                    messages:[],
                 })
       
                 const createdRoom = await newChatRoom.save()
@@ -69,27 +71,69 @@ const chatRoomResolver = {
         } , 
 
         joinRoom: async (_, { roomID , memberLength , limit } , { user } )=>{
+        
+                if(!user) {
 
-                if( memberLength < limit ) {
-
-                    pubsub.publish('MEMBER_JOINED_ROOM',{
-
-                        memberJoined:{
-                            user,
-                            roomID
-                        }
-                      
-                    })    
-
-                    const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
-
-                    return updated;
+                   throw new AuthenticationError("INVALID TOKEN"); 
 
                 } else {
 
-                    throw new ForbiddenError( " Member Limit is Reached !" );
-                    
+                    if( memberLength < limit ) {
+
+                        pubsub.publish('MEMBER_JOINED_ROOM',{
+    
+                            memberJoined:{
+                                user,
+                                roomID
+                            }
+                          
+                        })    
+    
+                        const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
+    
+                        return updated;
+    
+                    } else {
+    
+                        throw new ForbiddenError( " Member Limit is Reached !" );
+                        
+                    }
+
                 }
+
+        } ,
+
+
+        sendMessage: async (_, { roomID , text } , { user } )=>{
+      
+            if(!user) {
+
+                throw new AuthenticationError("INVALID TOKEN"); 
+
+            } else {
+
+                pubsub.publish( 'MESSAGE_SENT' , {
+
+                    messageSent:{
+                        text:text,
+                        date:new Date(),
+                        owner:user,
+                        roomID
+                    }
+
+                })
+
+                const updated = await ChatRoom.findOneAndUpdate( {_id:roomID} , {$push: { messages: { 
+
+                    date:new Date(),
+                    text,
+                    owner:user._id
+
+                }}})
+
+                return updated;
+
+            }
 
         }
 
@@ -122,10 +166,24 @@ const chatRoomResolver = {
     },
 
     Subscription: {
+
         memberJoined: {
             
             subscribe: () => pubsub.asyncIterator(['MEMBER_JOINED_ROOM'])
-        
+            
+        },
+
+        messageSent: {
+
+            subscribe: withFilter( 
+            
+            () => pubsub.asyncIterator('MESSAGE_SENT'),
+            (payload,args)=>{
+
+                return args.roomID ==  payload.messageSent.roomID
+
+            })
+
         }
     }
 
