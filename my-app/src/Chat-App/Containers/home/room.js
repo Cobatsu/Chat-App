@@ -25,7 +25,7 @@ const ChatBox = styled.div`
     justify-content:space-between;
     align-items:center;
     box-sizing: border-box;
-    flex:0.5;
+    width:55%;
     margin-left:30px;
     padding:10px;
 
@@ -34,7 +34,7 @@ const Members = styled.div`
 
     box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
     height:530px;
-    flex:0.20;
+    width:15%;
     display:flex;
     flex-direction:column;
     border-radius:8px;
@@ -92,25 +92,26 @@ const InnerMessage = styled.li`
  justify-content:flex-end;
  padding:5px 15px 5px 15px;
  box-sizing: border-box;
-
 `
 
-const TextBubble = styled.span`
+const TextBubble = styled.div`
  background:#03506f;
  color:white;
  padding:6px;
  border-radius:5px;
-
+ max-width:35%;
+ white-space:normal;
+ overflow-wrap: break-word;
 `
 
 const TextInformationBubble = styled.span`
 
 display:flex;
 flex-direction:column;
+justify-content:center;
 font-size:12px;
 padding:0 7px;
 align-items:center;
-
 `
 
 
@@ -203,7 +204,7 @@ const Room = ({match})=>{
 
                 <span style={{color:"#845ec2",fontWeight:"600",letterSpacing:1}}> GROUP MEMBERS </span>
 
-                <ul style={{ padding:0,listStyle:"none" , width:"38%" , marginTop:30 }}>
+                <ul style={{ padding:0,listStyle:"none" , width:"38%" , marginTop:30 , alignSelf:"flex-start" }}>
 
                     {
                         data && data.getChatRoom.members.map((member)=>{
@@ -242,9 +243,6 @@ const Room = ({match})=>{
                         {
                                 data && data.getChatRoom.messages.map((msg,index)=>{
 
-                                    const newDate = new Date(parseInt(msg.date)) // it must be integer to be converted into Date format ! 
-                                    const editedTime = newDate.getHours() + ":" +  ( newDate.getMinutes().toString().length == 1 ? '0'+ newDate.getMinutes() : newDate.getMinutes() )
-
                                         return (
                                         
                                         <InnerMessage key={index} checkOwner={ msg.owner._id == currentUser._id } > {/* row-reverse also reverses the end and start property */}
@@ -252,15 +250,19 @@ const Room = ({match})=>{
                                             <TextInformationBubble>
 
                                                 <span style={{color:"blue"}}> {msg.owner.username} </span>
-                                                <span>  {editedTime} </span>
+                                                <span>  {msg.date} </span>
 
                                             </TextInformationBubble>
+                                            
+                                           
+                                                    
+                                                <TextBubble>  
 
-                                            <TextBubble>  
+                                                    {msg.text}
 
-                                                {msg.text}
+                                                </TextBubble>
 
-                                            </TextBubble>
+                                           
 
                                         </InnerMessage> 
                                         

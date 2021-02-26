@@ -179,6 +179,15 @@ const chatRoomResolver = {
         owner: async (parent)=>{
             const result = await User.findById(parent.owner)
             return result;
+        },
+
+        date:(parent)=>{  // to modify a single field we can use these functions too
+            
+            const newDate = new Date(parent.date)  
+            const editedTime = newDate.getHours() + ":" +  ( newDate.getMinutes().toString().length == 1 ? '0'+ newDate.getMinutes() : newDate.getMinutes() )
+
+            return editedTime;
+
         }
 
     },
