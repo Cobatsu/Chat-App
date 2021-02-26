@@ -203,18 +203,26 @@ const Room = ({match})=>{
 
                 <span style={{color:"#845ec2",fontWeight:"600",letterSpacing:1}}> GROUP MEMBERS </span>
 
-                <ul style={{ padding:0,listStyle:"none" , width:"50%" , marginTop:30 }}>
+                <ul style={{ padding:0,listStyle:"none" , width:"38%" , marginTop:30 }}>
 
                     {
                         data && data.getChatRoom.members.map((member)=>{
 
                             return (
 
-                            <li style={{padding:5,width:"100%",display:"flex",fontSize:17.5,justifyContent:"center"}} key={member._id} > 
+                            <li style={{padding:5,width:"100%",display:"flex",fontSize:17.5,justifyContent:"flex-start"}} key={member._id} > 
 
-                                {member.username} 
-                                <i className="fas fa-user" style={{color:"#f14668",marginLeft:14}}></i>
-                                
+                                {
+                                    data.getChatRoom.host == member._id ? (
+                                    
+                                    <i className="fas fa-crown" style={{color:"#f0a500"}}/> 
+                                    
+                                    ) : (
+
+                                    <i className="fas fa-user" style={{color:"#f14668",marginRight:10}}/> )
+                                }
+
+                                <span> {member.username} </span>        
                                 
                             </li>
 

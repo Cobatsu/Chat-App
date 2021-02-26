@@ -4,12 +4,11 @@ export const GET_USER_ROOMS_QUERY = gql`
 
     query GetRooms{
         getUserRooms {
+
             _id
             limit
             title
-            members {
-                username
-            }
+
         }
     }
 
@@ -19,6 +18,7 @@ export const GET_OTHER_ROOMS_QUERY = gql`
 
     query GetOtherRooms{
         getOtherRooms {
+            
             _id
             limit
             title
@@ -26,10 +26,7 @@ export const GET_OTHER_ROOMS_QUERY = gql`
                 username
                 _id
             }
-            members {
-                username
-                _id
-            }
+         
         }
     }
 
