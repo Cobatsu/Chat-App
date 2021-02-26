@@ -1,9 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useEffect , useState} from 'react';
 import { useSubscription , useQuery , useMutation } from '@apollo/client'
 import { GET_CHAT_ROOM_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
-import { SEND_MESSAGE_MUTATION , MESSAGE_SENT } from '../../GraphqQL/Mutations/CatchRoomMutation'
+import { SEND_MESSAGE_MUTATION , MESSAGE_SENT , MEMBER_JOINED_ROOM_CHAT_ROOM } from '../../GraphqQL/Mutations/CatchRoomMutation'
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
+
 
 const GeneralWrapper = styled.div`
     display:flex;
@@ -87,7 +88,8 @@ const InnerMessage = styled.li`
  width:100%;
  display:flex;
  list-style: none;
- justify-content:${( {checkOwner} )=> checkOwner ? 'flex-end' : 'flex-start'};
+ flex-direction:${ ({checkOwner})=> checkOwner ? 'row' : 'row-reverse'}; 
+ justify-content:flex-end;
  padding:5px 15px 5px 15px;
  box-sizing: border-box;
 
@@ -96,8 +98,18 @@ const InnerMessage = styled.li`
 const TextBubble = styled.span`
  background:#03506f;
  color:white;
- padding:8px;
+ padding:6px;
  border-radius:5px;
+
+`
+
+const TextInformationBubble = styled.span`
+
+display:flex;
+flex-direction:column;
+font-size:12px;
+padding:0 7px;
+align-items:center;
 
 `
 
@@ -111,19 +123,21 @@ const Room = ({match})=>{
         }
     });
 
+    const [ send ] = useMutation(SEND_MESSAGE_MUTATION)
     const currentUser = useSelector((state = {}) => state.user);
     
-    let chatText;
-    const [ send ] = useMutation(SEND_MESSAGE_MUTATION)
-
     const sendMessage = ()=>{
 
-        send({
+        if(chatText.value) {
+
+            send({
                 variables:{
-                        text:chatText.value,
-                        roomID:match.params.id
+                        text:chatText.value || null,
+                        roomID:match.params.id || null
                 }
-        })
+            })
+
+        }
 
     }
 
@@ -138,7 +152,7 @@ const Room = ({match})=>{
 
                 const subMessage = subscriptionData.data.messageSent;
                 
-                const updatedData = Object.assign({},prev.getChatRoom,{ // object assign changes the original object !
+                const updatedData = Object.assign({},prev.getChatRoom,{ // object assign mutates the original object !
 
                     messages:{
                         subMessage , ...prev.getChatRoom.messages
@@ -153,7 +167,34 @@ const Room = ({match})=>{
             }
         })
 
+
+        subscribeToMore({
+            variables:{
+                roomID:match.params.id
+            },
+            document:MEMBER_JOINED_ROOM_CHAT_ROOM,
+            updateQuery:(prev,{subscriptionData})=>{
+
+                const joinedMember = subscriptionData.data.memberJoinedRoom.user;
+                console.log(joinedMember);
+                const updatedData = Object.assign({},prev.getChatRoom,{
+
+                    members:{
+                        joinedMember,...prev.getChatRoom.members
+                    }
+
+                })
+
+                return {
+                    getChatRoom:updatedData
+                }
+
+            }
+        })
+
     },[])
+
+    let chatText;
 
     return <GeneralWrapper> 
         
@@ -172,7 +213,7 @@ const Room = ({match})=>{
                             <li style={{padding:5,width:"100%",display:"flex",fontSize:17.5,justifyContent:"center"}} key={member._id} > 
 
                                 {member.username} 
-                                <i class="fas fa-user" style={{color:"#f14668",marginLeft:14}}></i>
+                                <i className="fas fa-user" style={{color:"#f14668",marginLeft:14}}></i>
                                 
                                 
                             </li>
@@ -192,11 +233,22 @@ const Room = ({match})=>{
 
                         {
                                 data && data.getChatRoom.messages.map((msg,index)=>{
+
+                                    const newDate = new Date(parseInt(msg.date)) // it must be integer to be converted into Date format ! 
+                                    const editedTime = newDate.getHours() + ":" +  ( newDate.getMinutes().toString().length == 1 ? '0'+ newDate.getMinutes() : newDate.getMinutes() )
+
                                         return (
                                         
-                                        <InnerMessage key={index} checkOwner={ msg.owner._id == currentUser._id } >
+                                        <InnerMessage key={index} checkOwner={ msg.owner._id == currentUser._id } > {/* row-reverse also reverses the end and start property */}
 
-                                            <TextBubble> 
+                                            <TextInformationBubble>
+
+                                                <span style={{color:"blue"}}> {msg.owner.username} </span>
+                                                <span>  {editedTime} </span>
+
+                                            </TextInformationBubble>
+
+                                            <TextBubble>  
 
                                                 {msg.text}
 

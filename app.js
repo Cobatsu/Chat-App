@@ -10,9 +10,12 @@ mongoose.connect(_Url,{ useUnifiedTopology: true,useNewUrlParser: true })
 .catch((err)=>console.log(err));
 
 const server = new ApolloServer( { schema , 
-  subscriptions: {
-        path: '/subscriptions'
-  }  ,context:async ( { req , connection } )=>{
+    
+    subscriptions: {
+            path: '/subscriptions',
+    },
+    
+    context:async ( { req , connection } )=>{
 
     if(connection) {
 

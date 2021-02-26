@@ -80,6 +80,14 @@ const chatRoomResolver = {
 
                     if( memberLength < limit ) {
 
+                        const findRoom = await ChatRoom.findById(roomID);
+
+                        if( findRoom.members.includes(user._id) ) {
+
+                            throw new ForbiddenError("You Already In Room!"); 
+
+                        }
+
                         pubsub.publish('MEMBER_JOINED_ROOM',{
     
                             memberJoined:{
@@ -87,7 +95,17 @@ const chatRoomResolver = {
                                 roomID
                             }
                           
-                        })    
+                        });
+                        
+                        
+                        pubsub.publish('MEMBER_JOINED_CHAT_ROOM',{
+
+                            memberJoinedRoom:{
+                                user,
+                                roomID
+                            }
+
+                        });
     
                         const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
     
@@ -183,6 +201,22 @@ const chatRoomResolver = {
                 return args.roomID ==  payload.messageSent.roomID
 
             })
+
+        },
+
+        memberJoinedRoom: {
+
+            subscribe: withFilter( 
+            
+                () => pubsub.asyncIterator('MEMBER_JOINED_CHAT_ROOM'),
+                (payload,args)=>{
+                    
+                    console.log("hello");
+
+                    return args.roomID ==  payload.memberJoinedRoom.roomID
+    
+                }
+            )
 
         }
     }

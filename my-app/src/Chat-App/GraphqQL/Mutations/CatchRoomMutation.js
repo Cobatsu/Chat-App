@@ -61,11 +61,29 @@ export const MESSAGE_SENT = gql`
             date
             owner {
                 username
+                _id
             }
 
         }
 
     }
+
+`
+
+export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
+
+subscription MemberJoinedRoom($roomID:ID!) {
+
+    memberJoinedRoom(roomID:$roomID) {
+
+        user {
+            username
+            _id
+        }
+
+    }
+
+}
 
 `
 

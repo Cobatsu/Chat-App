@@ -32,6 +32,7 @@ input RoomInput {
 type Subscription {
     memberJoined: RoomSubscripton!
     messageSent(roomID:ID!):  Message!
+    memberJoinedRoom(roomID:ID!): RoomSubscripton!
 }
 
 extend type Query{
