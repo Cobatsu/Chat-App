@@ -146,7 +146,7 @@ const OtherRooms = ()=>{
 
                                         return (
 
-                                        <InnerRooms key={room._id} onClick={joinRoom(room._id,room.limit,room.members.length)} >
+                                        <InnerRooms key={room._id} onClick={joinRoom(room._id,room.limit,room.members.length) } >
 
                                                 <span style={{display:'flex',alignItems:'center',justifyContent:'flex-start',flex:1}} >   
                                                         <i style={{marginRight:8 , color:"#00af91" }} className="fas fa-comment"></i>

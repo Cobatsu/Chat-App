@@ -124,7 +124,7 @@ const Room = ({match})=>{
         }
     });
 
-    const [ send ] = useMutation(SEND_MESSAGE_MUTATION)
+    const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION)
     const currentUser = useSelector((state = {}) => state.user);
     
     const sendMessage = ()=>{
@@ -195,6 +195,8 @@ const Room = ({match})=>{
 
     },[])
 
+    console.log(data);
+
     let chatText;
 
     return <GeneralWrapper> 
@@ -204,26 +206,26 @@ const Room = ({match})=>{
 
                 <span style={{color:"#845ec2",fontWeight:"600",letterSpacing:1}}> GROUP MEMBERS </span>
 
-                <ul style={{ padding:0,listStyle:"none" , width:"38%" , marginTop:30 , alignSelf:"flex-start" }}>
+                <ul style={{ padding:0,listStyle:"none" , width:"100%" , marginTop:30 }}>
 
                     {
                         data && data.getChatRoom.members.map((member)=>{
 
                             return (
 
-                            <li style={{padding:5,width:"100%",display:"flex",fontSize:17.5,justifyContent:"flex-start"}} key={member._id} > 
+                            <li style={{padding:5,width:"50%",display:"flex",fontSize:17.5,alignItems:"center"}} key={member._id} > 
 
                                 {
-                                    data.getChatRoom.host == member._id ? (
+                                    data.getChatRoom.host._id == member._id ? (
                                     
-                                    <i className="fas fa-crown" style={{color:"#f0a500"}}/> 
+                                    <i className="fas fa-crown" style={{color:"#f0a500",fontSize:15}}/> 
                                     
                                     ) : (
 
-                                    <i className="fas fa-user" style={{color:"#f14668",marginRight:10}}/> )
+                                    <i className="fas fa-user" style={{color:"#845ec2",fontSize:15}}/> )
                                 }
 
-                                <span> {member.username} </span>        
+                                <span style={{marginLeft:10}}> {member.username} </span>        
                                 
                             </li>
 
@@ -275,7 +277,11 @@ const Room = ({match})=>{
                     <TextPart>
 
                             <ChatTextInput ref={ ref => chatText = ref }/>
-                            <Send onClick={sendMessage} > SEND </Send>
+                            <Send onClick={sendMessage} > {
+
+                                    Loading ? <img src="/spin.gif" width="30"/> : "SEND"
+
+                            } </Send>
 
                     </TextPart>
                    

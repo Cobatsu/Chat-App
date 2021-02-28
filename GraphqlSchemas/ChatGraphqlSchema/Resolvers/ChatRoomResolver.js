@@ -78,44 +78,44 @@ const chatRoomResolver = {
 
                 } else {
 
-                    if( memberLength < limit ) {
-
                         const findRoom = await ChatRoom.findById(roomID);
 
-                        if( findRoom.members.includes(user._id) ) {
+                        if( findRoom.members.length < findRoom.limit ) {
 
-                            throw new ForbiddenError("You Already In Room!"); 
+                            if( findRoom.members.includes(user._id) ) {
+
+                                throw new ForbiddenError("You Already In Room!"); 
+    
+                            }
+    
+                            pubsub.publish('MEMBER_JOINED_ROOM',{
+        
+                                memberJoined:{
+                                    user,
+                                    roomID
+                                }
+                              
+                            });
+                            
+                            
+                            pubsub.publish('MEMBER_JOINED_CHAT_ROOM',{
+    
+                                memberJoinedRoom:{
+                                    user,
+                                    roomID
+                                }
+    
+                            });
+        
+                            const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
+        
+                            return updated;
+
+                        } else {
+
+                            throw new ForbiddenError("Member Limit Is Reached"); 
 
                         }
-
-                        pubsub.publish('MEMBER_JOINED_ROOM',{
-    
-                            memberJoined:{
-                                user,
-                                roomID
-                            }
-                          
-                        });
-                        
-                        
-                        pubsub.publish('MEMBER_JOINED_CHAT_ROOM',{
-
-                            memberJoinedRoom:{
-                                user,
-                                roomID
-                            }
-
-                        });
-    
-                        const updated = await  ChatRoom.findOneAndUpdate( { _id:roomID } , {$push: { members: user._id } } );
-    
-                        return updated;
-    
-                    } else {
-    
-                        throw new ForbiddenError( " Member Limit is Reached !" );
-                        
-                    }
 
                 }
 

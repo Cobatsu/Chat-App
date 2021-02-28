@@ -2,8 +2,9 @@ import React , {useEffect} from 'react';
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 import {  useHistory } from 'react-router-dom'
-import { useQuery , NetworkStatus } from '@apollo/client'
+import { useQuery , NetworkStatus , useMutation } from '@apollo/client'
 import { GET_USER_ROOMS_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
+import { JOIN_ROOM_MUTATION , MEMBER_JOINED_ROOM } from '../../GraphqQL/Mutations/CatchRoomMutation'
 
 const Container = styled.div`
 
@@ -45,7 +46,21 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
         const { data , loading , error , refetch  } = useQuery(GET_USER_ROOMS_QUERY, {
                 fetchPolicy:"network-only",        
                 notifyOnNetworkStatusChange:true  
-        })
+        });
+
+        const history = useHistory();
+
+        const [ join ]  = useMutation(JOIN_ROOM_MUTATION , {
+
+                onError:(error)=> console.log(error) ,
+
+                onCompleted:({joinRoom})=>{
+
+                        history.push('/room/'+joinRoom._id);
+
+                }
+
+        });
 
 
         const storeError = useSelector( ( state = {} ) => state.error ); 
@@ -62,7 +77,22 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
                 }
               
-        },[timeToRefetch])
+        },[timeToRefetch]);
+
+        
+        const joinRoom = (id,limit,memberLength)=>(e)=>{
+ 
+                join({
+
+                    variables:{
+                        roomID:id,
+                        limit,
+                        memberLength
+                     }
+
+               })
+
+        }
 
 
         return (
@@ -81,7 +111,7 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
                                         return (
 
-                                        <InnerRooms key={room._id} >
+                                        <InnerRooms key={room._id}  onClick={joinRoom(room._id,room.limit,room.members.length)} >
 
                                                 <span style={{display:'flex',alignItems:'center'}} >   
                                                         <i style={{marginRight:8 , color:"#f05454" }} className="fas fa-comment"></i>

@@ -47,6 +47,10 @@ export const GET_CHAT_ROOM_QUERY = gql`
 
         getChatRoom(roomID:$roomID) {
 
+            host {
+                _id
+            }
+
             messages {
                 text
                 owner {
