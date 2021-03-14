@@ -51,6 +51,20 @@ export const SEND_MESSAGE_MUTATION = gql`
 
 `
 
+export const DELETE_MESSAGE_MUTATION = gql`
+
+    mutation DeleteMessage($messageID:ID!) {
+
+        deleteMessage(messageID:$messageID) {
+
+            _id
+
+        }
+
+    }
+
+`
+
 export const MESSAGE_SENT = gql`
 
     subscription MessageSent($roomID:ID!) {
@@ -72,18 +86,18 @@ export const MESSAGE_SENT = gql`
 
 export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
 
-subscription MemberJoinedRoom($roomID:ID!) {
+    subscription MemberJoinedRoom($roomID:ID!) {
 
-    memberJoinedRoom(roomID:$roomID) {
+        memberJoinedRoom(roomID:$roomID) {
 
-        user {
-            username
-            _id
+            user {
+                username
+                _id
+            }
+
         }
 
     }
-
-}
 
 `
 

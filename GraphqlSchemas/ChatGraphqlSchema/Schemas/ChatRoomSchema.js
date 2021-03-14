@@ -45,6 +45,7 @@ extend type Mutation {
     createRoom(room:RoomInput!) : Room!
     joinRoom(roomID:ID!,limit:Int!,memberLength:Int!) : Room!
     sendMessage(text:String!,roomID:ID!) : Room!
+    deleteMessage(roomID:ID!,messageID:ID!) : Message!
 }
 
 `

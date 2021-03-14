@@ -1,7 +1,7 @@
 import React, {useEffect , useState} from 'react';
 import { useSubscription , useQuery , useMutation } from '@apollo/client'
 import { GET_CHAT_ROOM_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
-import { SEND_MESSAGE_MUTATION , MESSAGE_SENT , MEMBER_JOINED_ROOM_CHAT_ROOM } from '../../GraphqQL/Mutations/CatchRoomMutation'
+import { SEND_MESSAGE_MUTATION , MESSAGE_SENT , MEMBER_JOINED_ROOM_CHAT_ROOM , DELETE_MESSAGE_MUTATION} from '../../GraphqQL/Mutations/CatchRoomMutation'
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 
@@ -83,6 +83,16 @@ const Messages = styled.ul`
  overflow-x: hidden;
 `
 
+const DeleteTextBubble = styled.div`
+
+align-items:center;
+justify-content:center;
+padding:0 7px;
+display:none;
+cursor:pointer;
+`
+
+
 const InnerMessage = styled.li`
 
  width:100%;
@@ -92,6 +102,9 @@ const InnerMessage = styled.li`
  justify-content:flex-end;
  padding:5px 15px 5px 15px;
  box-sizing: border-box;
+ &:hover ${DeleteTextBubble}{
+    display:flex;
+}
 `
 
 const TextBubble = styled.div`
@@ -114,7 +127,6 @@ padding:0 7px;
 align-items:center;
 `
 
-
 const Room = ({match})=>{
 
     const { data , loading , error , subscribeToMore } = useQuery(GET_CHAT_ROOM_QUERY,{
@@ -124,10 +136,13 @@ const Room = ({match})=>{
         }
     });
 
-    const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION)
+    const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION);
+    const [ deleteMessage ] = useMutation(DELETE_MESSAGE_MUTATION);
+
+
     const currentUser = useSelector((state = {}) => state.user);
     
-    const sendMessage = ()=>{
+    const OnSendMessage = ()=>{
 
         if(chatText.value) {
 
@@ -139,6 +154,16 @@ const Room = ({match})=>{
             })
 
         }
+
+    }
+
+    const OnDeleteMessage = (ID)=>(e)=>{
+
+            deleteMessage({
+                variables:{
+                    messageID:ID
+                }
+            })
 
     }
 
@@ -155,10 +180,7 @@ const Room = ({match})=>{
 
                 const updatedData = Object.assign({},prev.getChatRoom,{ // object assign mutates the just first original object !
 
-                    messages:[
-                        ...prev.getChatRoom.messages , 
-                        subMessage  
-                    ]
+                    messages:subMessage                   
 
                 }) // this updates the present value
 
@@ -177,14 +199,10 @@ const Room = ({match})=>{
             document:MEMBER_JOINED_ROOM_CHAT_ROOM,
             updateQuery:(prev,{subscriptionData})=>{
 
-                const joinedMember = subscriptionData.data.memberJoinedRoom.user;
-                console.log(joinedMember);
+                const joinedMember = subscriptionData.data.memberJoinedRoom.user;           
                 const updatedData = Object.assign({},prev.getChatRoom,{
 
-                    members:[       
-                        joinedMember,
-                        ...prev.getChatRoom.members,
-                    ]
+                    members:joinedMember
 
                 })
 
@@ -197,7 +215,6 @@ const Room = ({match})=>{
 
     },[])
 
-    console.log(data);
 
     let chatText;
 
@@ -258,11 +275,22 @@ const Room = ({match})=>{
 
                                             </TextInformationBubble>
                                                                                                 
-                                                <TextBubble>  
+                                            <TextBubble>  
 
                                                     {msg.text}
 
-                                                </TextBubble>
+                                            </TextBubble>
+
+                                            {
+                                                    msg.owner._id == currentUser._id &&  (
+
+                                                    <DeleteTextBubble onClick={OnDeleteMessage(msg._id)} >
+
+                                                        <i style={{color:"#ec4646"}} className="fas fa-trash-alt"></i>
+        
+                                                    </DeleteTextBubble> )
+                                            }
+                                          
 
                                         </InnerMessage> 
                                         
@@ -275,7 +303,7 @@ const Room = ({match})=>{
                     <TextPart>
 
                             <ChatTextInput ref={ ref => chatText = ref }/>
-                            <Send onClick={sendMessage} > {
+                            <Send onClick={OnSendMessage} > {
 
                                     Loading ? <img src="/spin.gif" width="30"/> : "SEND"
 

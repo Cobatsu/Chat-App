@@ -121,7 +121,29 @@ const chatRoomResolver = {
 
         } ,
 
+        deleteMessage: async (_, { messageID , roomID } , { user })=>{
 
+            if(!user) {
+
+                throw new AuthenticationError("INVALID TOKEN"); 
+
+            } else {
+
+                const deleted = await ChatRoom.findById(roomID);
+                
+                const updatedData = deleted.messages.filter((msg)=>  msg._id != messageID )  
+
+                const deletedMessage = deleted.messages.find((msg)=> msg._id == messageID )
+
+                deleted.messages = updatedData;
+
+                await deleted.save();
+
+                return deletedMessage;
+
+            }
+
+        },
         sendMessage: async (_, { roomID , text } , { user } )=>{
       
             if(!user) {
@@ -160,7 +182,7 @@ const chatRoomResolver = {
 
         host: async (parent)=>{
 
-            const result = await User.findById(parent.host);
+            const result = await User.findById(parent.host); // no need for object structure
             return result
 
         },
