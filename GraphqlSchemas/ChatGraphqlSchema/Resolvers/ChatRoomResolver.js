@@ -31,7 +31,7 @@ const chatRoomResolver = {
         } ,
 
 
-        getChatRoom:async (_,args, { user} )=>{
+        getChatRoom:async (_,args, { user } )=>{
 
             if(!user) {
                 throw new AuthenticationError("INVALID TOKEN");

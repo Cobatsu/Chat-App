@@ -152,12 +152,13 @@ const Room = ({match})=>{
             updateQuery:(prev, { subscriptionData })=>{
 
                 const subMessage = subscriptionData.data.messageSent;
-                
-                const updatedData = Object.assign({},prev.getChatRoom,{ // object assign mutates the original object !
 
-                    messages:{
-                        subMessage , ...prev.getChatRoom.messages
-                    }
+                const updatedData = Object.assign({},prev.getChatRoom,{ // object assign mutates the just first original object !
+
+                    messages:[
+                        ...prev.getChatRoom.messages , 
+                        subMessage  
+                    ]
 
                 }) // this updates the present value
 
@@ -180,9 +181,10 @@ const Room = ({match})=>{
                 console.log(joinedMember);
                 const updatedData = Object.assign({},prev.getChatRoom,{
 
-                    members:{
-                        joinedMember,...prev.getChatRoom.members
-                    }
+                    members:[       
+                        joinedMember,
+                        ...prev.getChatRoom.members,
+                    ]
 
                 })
 
@@ -255,16 +257,12 @@ const Room = ({match})=>{
                                                 <span>  {msg.date} </span>
 
                                             </TextInformationBubble>
-                                            
-                                           
-                                                    
+                                                                                                
                                                 <TextBubble>  
 
                                                     {msg.text}
 
                                                 </TextBubble>
-
-                                           
 
                                         </InnerMessage> 
                                         
