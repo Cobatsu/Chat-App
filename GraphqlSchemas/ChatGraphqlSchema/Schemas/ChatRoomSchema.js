@@ -13,6 +13,7 @@ type Room {
 
 type Message {
 
+    _id:ID!
     owner:User!
     text:String!
     date:String!

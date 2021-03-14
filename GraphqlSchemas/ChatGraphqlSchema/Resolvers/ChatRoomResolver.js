@@ -137,7 +137,7 @@ const chatRoomResolver = {
 
                 deleted.messages = updatedData;
 
-                await deleted.save();
+                await deleted.save(); // we can update data after using find function 
 
                 return deletedMessage;
 

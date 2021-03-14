@@ -137,8 +137,9 @@ const Room = ({match})=>{
     });
 
     const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION);
-    const [ deleteMessage ] = useMutation(DELETE_MESSAGE_MUTATION);
+    const [ deleteMessage , { data:deletedMessage }] = useMutation(DELETE_MESSAGE_MUTATION);
 
+    console.log(deletedMessage);
 
     const currentUser = useSelector((state = {}) => state.user);
     
@@ -161,7 +162,8 @@ const Room = ({match})=>{
 
             deleteMessage({
                 variables:{
-                    messageID:ID
+                    messageID:ID || null,
+                    roomID:match.params.id || null
                 }
             })
 

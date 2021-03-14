@@ -52,6 +52,7 @@ export const GET_CHAT_ROOM_QUERY = gql`
             }
 
             messages {
+                _id
                 text
                 owner {
                     username

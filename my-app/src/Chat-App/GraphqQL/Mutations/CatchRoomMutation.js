@@ -53,11 +53,12 @@ export const SEND_MESSAGE_MUTATION = gql`
 
 export const DELETE_MESSAGE_MUTATION = gql`
 
-    mutation DeleteMessage($messageID:ID!) {
+    mutation DeleteMessage($messageID:ID!,$roomID:ID!) {
 
-        deleteMessage(messageID:$messageID) {
+        deleteMessage(messageID:$messageID,roomID:$roomID) {
 
             _id
+            text
 
         }
 
