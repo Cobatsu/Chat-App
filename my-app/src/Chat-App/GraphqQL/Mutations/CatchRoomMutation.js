@@ -71,7 +71,7 @@ export const MESSAGE_SENT = gql`
     subscription MessageSent($roomID:ID!) {
 
         messageSent(roomID:$roomID) {
-
+    
             text
             date
             owner {
@@ -84,6 +84,13 @@ export const MESSAGE_SENT = gql`
     }
 
 `
+
+// export const MESSAGE_DELETED = gql `
+
+ 
+ 
+// `   
+
 
 export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
 

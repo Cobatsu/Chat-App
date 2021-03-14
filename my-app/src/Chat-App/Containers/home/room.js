@@ -1,7 +1,7 @@
 import React, {useEffect , useState} from 'react';
 import { useSubscription , useQuery , useMutation } from '@apollo/client'
 import { GET_CHAT_ROOM_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
-import { SEND_MESSAGE_MUTATION , MESSAGE_SENT , MEMBER_JOINED_ROOM_CHAT_ROOM , DELETE_MESSAGE_MUTATION} from '../../GraphqQL/Mutations/CatchRoomMutation'
+import { SEND_MESSAGE_MUTATION , MESSAGE_SENT   , MEMBER_JOINED_ROOM_CHAT_ROOM , DELETE_MESSAGE_MUTATION} from '../../GraphqQL/Mutations/CatchRoomMutation'
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 
@@ -139,8 +139,6 @@ const Room = ({match})=>{
     const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION);
     const [ deleteMessage , { data:deletedMessage }] = useMutation(DELETE_MESSAGE_MUTATION);
 
-    console.log(deletedMessage);
-
     const currentUser = useSelector((state = {}) => state.user);
     
     const OnSendMessage = ()=>{
@@ -179,12 +177,15 @@ const Room = ({match})=>{
             updateQuery:(prev, { subscriptionData })=>{
 
                 const subMessage = subscriptionData.data.messageSent;
-
+         
                 const updatedData = Object.assign({},prev.getChatRoom,{ // object assign mutates the just first original object !
 
-                    messages:subMessage                   
+                    messages:[
+                        ...prev.getChatRoom.messages,
+                        subMessage
+                    ]                   
 
-                }) // this updates the present value
+                }) // this updates the present value in apollo cache
 
                 return {
                     getChatRoom:updatedData
@@ -193,7 +194,7 @@ const Room = ({match})=>{
             }
         })
 
-
+     
         subscribeToMore({
             variables:{
                 roomID:match.params.id
@@ -216,7 +217,6 @@ const Room = ({match})=>{
         })
 
     },[])
-
 
     let chatText;
 
