@@ -23,7 +23,7 @@ const server = new ApolloServer( { schema ,
 
     } else {
 
-       var token = req.headers['authorization'].split(' ')[1];       
+        var token = req.headers['authorization'].split(' ')[1];       
 
     }
     

@@ -121,6 +121,17 @@ const chatRoomResolver = {
 
         } ,
 
+        leaveRoom: async (_, { roomID } , { user } )=>{
+
+            if(!user) {
+                throw new AuthenticationError("INVALID TOKEN"); 
+            } else {
+                const leftRoom = await ChatRoom.findOneAndUpdate({ _id:roomID} , {$pull:{ members:user._id }});
+                return leftRoom
+            }
+            
+        } ,
+
         deleteMessage: async (_, { messageID , roomID } , { user })=>{
 
             if(!user) {

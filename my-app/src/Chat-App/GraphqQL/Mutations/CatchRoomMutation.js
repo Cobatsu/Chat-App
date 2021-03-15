@@ -16,12 +16,31 @@ export const CREATE_ROOM_MUTATION = gql`
 export const JOIN_ROOM_MUTATION = gql`
     mutation JoinRoom($roomID:ID!,$limit:Int!,$memberLength:Int!) {
         joinRoom(roomID:$roomID,limit:$limit,memberLength:$memberLength) {
-            _id,
-            title,
+            _id
+            title
             limit
         }
     }
 `
+
+export const LEAVE_ROOM_MUTATION = gql`
+
+    mutation LeaveRoom($roomID:ID!) {
+
+        leaveRoom(roomID:$roomID) {
+
+            title
+            _id
+
+        }
+
+    }
+
+
+`
+
+
+
 
 export const MEMBER_JOINED_ROOM = gql`
 
@@ -99,7 +118,6 @@ export const MESSAGE_DELETED = gql `
     }
  
 `   
-
 
 export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
 

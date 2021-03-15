@@ -1,9 +1,18 @@
-import React, {useEffect , useState} from 'react';
-import { useSubscription , useQuery , useMutation } from '@apollo/client'
+import React, {useEffect} from 'react';
+import { useQuery , useMutation } from '@apollo/client'
 import { GET_CHAT_ROOM_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
-import { SEND_MESSAGE_MUTATION , MESSAGE_SENT , MESSAGE_DELETED  , MEMBER_JOINED_ROOM_CHAT_ROOM , DELETE_MESSAGE_MUTATION} from '../../GraphqQL/Mutations/CatchRoomMutation'
+import {  
+    
+    SEND_MESSAGE_MUTATION , 
+    MESSAGE_SENT , 
+    MESSAGE_DELETED  , 
+    MEMBER_JOINED_ROOM_CHAT_ROOM ,
+    DELETE_MESSAGE_MUTATION , 
+    LEAVE_ROOM_MUTATION } from '../../GraphqQL/Mutations/CatchRoomMutation'
+
 import styled from 'styled-components';
-import { useSelector , useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom'
 
 
 const GeneralWrapper = styled.div`
@@ -173,9 +182,18 @@ const Room = ({match})=>{
             roomID:match.params.id
         }
     });
-
+    const history = useHistory();
     const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION);
     const [ deleteMessage ] = useMutation(DELETE_MESSAGE_MUTATION);
+    const [ leaveRoom ] = useMutation(LEAVE_ROOM_MUTATION , {
+
+        onCompleted:(data)=>{
+
+            history.push('/main-page');
+
+        }
+
+    });
 
     const currentUser = useSelector((state = {}) => state.user);
     
@@ -184,13 +202,25 @@ const Room = ({match})=>{
         if(chatText.value) {
 
             send({
+
                 variables:{
                         text:chatText.value || null,
                         roomID:match.params.id || null
                 }
+                
             })
 
         }
+
+    }
+
+    const onLeaveRoom = ()=>{
+
+        leaveRoom({
+            variables:{
+                roomID:match.params.id
+            } 
+        })
 
     }
 
@@ -204,6 +234,16 @@ const Room = ({match})=>{
             })
 
     }
+
+    useEffect(()=>{ // we can handle user's status in room by using unmount function provided by useffect !
+
+        return ()=>{
+
+            onLeaveRoom();
+
+        }
+
+    },[])
 
     useEffect(()=>{
 
@@ -274,7 +314,11 @@ const Room = ({match})=>{
 
     return <GeneralWrapper> 
 
-            <LeaveGroup>  <i class="fas fa-sign-out-alt"></i> LEAVE THE ROOM </LeaveGroup>
+            <LeaveGroup onClick={onLeaveRoom}>  
+                    
+                <i class="fas fa-sign-out-alt"></i> LEAVE THE ROOM 
+
+            </LeaveGroup>
             
             <Members>
 
