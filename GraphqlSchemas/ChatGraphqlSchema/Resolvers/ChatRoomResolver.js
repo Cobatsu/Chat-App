@@ -129,11 +129,22 @@ const chatRoomResolver = {
 
             } else {
 
+            
                 const deleted = await ChatRoom.findById(roomID);
                 
                 const updatedData = deleted.messages.filter((msg)=>  msg._id != messageID )  
 
                 const deletedMessage = deleted.messages.find((msg)=> msg._id == messageID )
+
+                pubsub.publish('MESSAGE_DELETED', {
+
+                    messageDeleted:{
+                        _id:messageID,
+                        text:deletedMessage.text,
+                        roomID
+                    }
+
+                })
 
                 deleted.messages = updatedData;
 
@@ -249,6 +260,21 @@ const chatRoomResolver = {
                     console.log("hello");
 
                     return args.roomID ==  payload.memberJoinedRoom.roomID
+    
+                }
+            )
+
+        },
+
+
+        messageDeleted: {
+
+            subscribe: withFilter( 
+            
+                () => pubsub.asyncIterator('MESSAGE_DELETED'),
+                (payload,args)=>{
+                    
+                    return args.roomID ==  payload.messageDeleted.roomID
     
                 }
             )

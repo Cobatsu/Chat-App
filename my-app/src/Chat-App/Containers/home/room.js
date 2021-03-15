@@ -1,7 +1,7 @@
 import React, {useEffect , useState} from 'react';
 import { useSubscription , useQuery , useMutation } from '@apollo/client'
 import { GET_CHAT_ROOM_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
-import { SEND_MESSAGE_MUTATION , MESSAGE_SENT   , MEMBER_JOINED_ROOM_CHAT_ROOM , DELETE_MESSAGE_MUTATION} from '../../GraphqQL/Mutations/CatchRoomMutation'
+import { SEND_MESSAGE_MUTATION , MESSAGE_SENT , MESSAGE_DELETED  , MEMBER_JOINED_ROOM_CHAT_ROOM , DELETE_MESSAGE_MUTATION} from '../../GraphqQL/Mutations/CatchRoomMutation'
 import styled from 'styled-components';
 import { useSelector , useDispatch } from 'react-redux';
 
@@ -181,11 +181,31 @@ const Room = ({match})=>{
                 const subMessage = subscriptionData.data.messageSent;
                 
                 const mergedData = Object.assign({},prev.getChatRoom,{
-                    messages:[...prev.getChatRoom.messages,subMessage]
+                    messages:prev.getChatRoom.messages.concat(subMessage)
                 })  // message type must be the same shape as prevmessagetype
 
                 return {
                     getChatRoom:mergedData  
+                } 
+
+            }
+        })
+
+        subscribeToMore({
+            variables:{
+                roomID:match.params.id
+            },
+            document:MESSAGE_DELETED,
+            updateQuery:(prev , { subscriptionData } )=>{
+
+                const deletedMessage = subscriptionData.data.messageDeleted
+
+                const updatedData = Object.assign({},prev.getChatRoom,{
+                    messages:prev.getChatRoom.messages.filter((msg)=> msg._id != deletedMessage._id )
+                })
+
+                return {
+                    getChatRoom:updatedData  
                 } 
 
             }
