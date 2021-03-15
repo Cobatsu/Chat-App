@@ -11,8 +11,8 @@ const GeneralWrapper = styled.div`
     justify-content:center;
     align-items:center;
     height:100%;
-    width:88%;
     margin:0 auto;
+    background:#3797a4;
 `
 
 
@@ -28,6 +28,8 @@ const ChatBox = styled.div`
     width:55%;
     margin-left:30px;
     padding:10px;
+    background:white;
+    border-radius:8px;
 
 `
 const Members = styled.div`
@@ -41,30 +43,38 @@ const Members = styled.div`
     align-items:center; 
     box-sizing: border-box;
     padding:10px;
+    background:white;
 
 `
 //................................
 
 const TextPart = styled.div`
     display:flex;
+    justify-content:space-between;
     width:100%;
     flex:0.06;
 `
 
 const ChatTextInput = styled.input`
 
-    flex:0.85;
-    padding:2px;
+    flex:0.83;
     height:30px;
-    font-size:15px;
+    font-size:17px;
+    background:#6f9eaf;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:5px 10px;
+    outline: none;
 
 `
 
 const Send = styled.button`
 
-    background:#28527a;
+    background:#ef4f4f;
     color:white;
     border:none;
+    border-radius:8px;
     flex:0.15;
     &:hover{
         cursor:pointer
@@ -87,9 +97,10 @@ const DeleteTextBubble = styled.div`
 
 align-items:center;
 justify-content:center;
-padding:0 7px;
-display:none;
-cursor:pointer;
+display:flex;
+overflow: hidden;
+width:0;
+transition:110ms;
 `
 
 
@@ -102,19 +113,26 @@ const InnerMessage = styled.li`
  justify-content:flex-end;
  padding:5px 15px 5px 15px;
  box-sizing: border-box;
+ &:hover {
+    background:${ ({checkOwner})=> checkOwner ? '#f8f1f1' : 'auto'};
+ }
  &:hover ${DeleteTextBubble}{
-    display:flex;
+    width:auto;
+    padding:0 7px;
+    cursor:pointer;
 }
+ 
 `
 
 const TextBubble = styled.div`
- background:#03506f;
+ background:#6f9eaf;
  color:white;
  padding:6px;
  border-radius:5px;
  max-width:35%;
  white-space:normal;
  overflow-wrap: break-word;
+
 `
 
 const TextInformationBubble = styled.span`
@@ -125,6 +143,8 @@ justify-content:center;
 font-size:12px;
 padding:0 7px;
 align-items:center;
+color:#ef4f4f;
+font-weight:600;
 `
 
 const Room = ({match})=>{
@@ -154,8 +174,6 @@ const Room = ({match})=>{
         }
 
     }
-
-    console.log(data);
 
     const OnDeleteMessage = (ID)=>(e)=>{
 
@@ -191,7 +209,7 @@ const Room = ({match})=>{
             }
         })
 
-        subscribeToMore({
+        subscribeToMore({ // we can write a function that handles both delete and send actions but it is okay just for now 
             variables:{
                 roomID:match.params.id
             },
@@ -240,7 +258,7 @@ const Room = ({match})=>{
             
             <Members>
 
-                <span style={{color:"#845ec2",fontWeight:"600",letterSpacing:1}}> GROUP MEMBERS </span>
+                <span style={{color:"#ef4f4f",fontWeight:"600",letterSpacing:1}}> GROUP MEMBERS </span>
 
                 <ul style={{ padding:0,listStyle:"none" , width:"100%" , marginTop:30 }}>
 
@@ -258,7 +276,7 @@ const Room = ({match})=>{
                                     
                                     ) : (
 
-                                    <i className="fas fa-user" style={{color:"#845ec2",fontSize:15}}/> )
+                                    <i className="fas fa-user" style={{color:"#ef4f4f",fontSize:15}}/> )
                                 }
 
                                 <span style={{marginLeft:10}}> {member.username} </span>        
@@ -287,7 +305,7 @@ const Room = ({match})=>{
 
                                             <TextInformationBubble>
 
-                                                <span style={{color:"blue"}}> {msg.owner.username} </span>
+                                                <span> {msg.owner.username} </span>
                                                 <span>  {msg.date} </span>
 
                                             </TextInformationBubble>
