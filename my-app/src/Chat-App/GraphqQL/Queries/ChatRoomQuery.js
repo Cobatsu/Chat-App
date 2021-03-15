@@ -47,6 +47,8 @@ export const GET_CHAT_ROOM_QUERY = gql`
 
         getChatRoom(roomID:$roomID) {
 
+            limit
+            
             host {
                 _id
             }

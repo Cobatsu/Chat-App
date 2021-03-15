@@ -125,14 +125,13 @@ const InnerMessage = styled.li`
 `
 
 const TextBubble = styled.div`
- background:#6f9eaf;
+ background: #6f9eaf;
  color:white;
  padding:6px;
  border-radius:5px;
  max-width:35%;
  white-space:normal;
  overflow-wrap: break-word;
-
 `
 
 const TextInformationBubble = styled.span`
@@ -143,9 +142,11 @@ justify-content:center;
 font-size:12px;
 padding:0 7px;
 align-items:center;
-color:#ef4f4f;
+color:${({memberColor})=>memberColor};
 font-weight:600;
 `
+
+const memberColors = [ "BlueViolet ", "Chartreuse", "DarkCyan", "DarkGoldenRod", "DarkBlue", "DarkRed", "DarkOrange", "Indigo" , "Purple" , "YellowGreen"];
 
 const Room = ({match})=>{
 
@@ -258,12 +259,37 @@ const Room = ({match})=>{
             
             <Members>
 
-                <span style={{color:"#ef4f4f",fontWeight:"600",letterSpacing:1}}> GROUP MEMBERS </span>
+                <span style={{color:"#ef4f4f",fontSize:13,fontWeight:"600",letterSpacing:1}}> 
+                
+                    GROUP MEMBERS 
+                    
+                    <span style={{marginLeft:5}}>
+                        
+                        { data &&  
+                        
+                            <React.Fragment> { /* we need to use react fragment here to convert ( to string */ }
+
+                                ( 
+                                        
+                                    {
+                                        ( data.getChatRoom.limit  + '/' +  data.getChatRoom.members.length )     
+                                    }
+
+                                    <i style={{fontSize:10}} className="fas fa-user"/> 
+                                    
+                                )
+                                        
+                            </React.Fragment> }
+                    
+                    </span>
+
+
+                </span>
 
                 <ul style={{ padding:0,listStyle:"none" , width:"100%" , marginTop:30 }}>
 
                     {
-                        data && data.getChatRoom.members.map((member)=>{
+                        data && data.getChatRoom.members.map((member,index)=>{
 
                             return (
 
@@ -276,7 +302,7 @@ const Room = ({match})=>{
                                     
                                     ) : (
 
-                                    <i className="fas fa-user" style={{color:"#ef4f4f",fontSize:15}}/> )
+                                    <i className="fas fa-user" style={{color:memberColors[index],fontSize:15}}/> )
                                 }
 
                                 <span style={{marginLeft:10}}> {member.username} </span>        
@@ -303,7 +329,11 @@ const Room = ({match})=>{
                                         
                                         <InnerMessage key={index} checkOwner={ msg.owner._id == currentUser._id } > {/* row-reverse also reverses the end and start property */}
 
-                                            <TextInformationBubble>
+                                            <TextInformationBubble memberColor = {memberColors[
+
+                                                data.getChatRoom.members.findIndex((m)=> m._id == msg.owner._id)
+
+                                            ]} >
 
                                                 <span> {msg.owner.username} </span>
                                                 <span>  {msg.date} </span>
@@ -353,5 +383,6 @@ const Room = ({match})=>{
 
 
 }
+
 
 export default Room;
