@@ -13,6 +13,7 @@ const GeneralWrapper = styled.div`
     height:100%;
     margin:0 auto;
     background:#3797a4;
+    position:relative;
 `
 
 
@@ -135,7 +136,6 @@ const TextBubble = styled.div`
 `
 
 const TextInformationBubble = styled.span`
-
 display:flex;
 flex-direction:column;
 justify-content:center;
@@ -145,6 +145,24 @@ align-items:center;
 color:${({memberColor})=>memberColor};
 font-weight:600;
 `
+
+const LeaveGroup = styled.button`
+
+    background:#ef4f4f;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:12px;
+    &:hover{
+        cursor:pointer
+    }
+    position:absolute;
+    top:20px;
+    left:20px;
+    padding:10px;
+
+`
+
 
 const memberColors = [ "BlueViolet ", "Chartreuse", "DarkCyan", "DarkGoldenRod", "DarkBlue", "DarkRed", "DarkOrange", "Indigo" , "Purple" , "YellowGreen"];
 
@@ -255,7 +273,8 @@ const Room = ({match})=>{
     let chatText;
 
     return <GeneralWrapper> 
-        
+
+            <LeaveGroup>  <i class="fas fa-sign-out-alt"></i> LEAVE THE ROOM </LeaveGroup>
             
             <Members>
 
