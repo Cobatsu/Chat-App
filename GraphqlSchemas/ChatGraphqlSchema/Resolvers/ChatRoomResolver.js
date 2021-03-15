@@ -91,7 +91,7 @@ const chatRoomResolver = {
                             pubsub.publish('MEMBER_JOINED_ROOM',{
         
                                 memberJoined:{
-                                    user,
+                                    ...user,
                                     roomID
                                 }
                               
@@ -101,7 +101,7 @@ const chatRoomResolver = {
                             pubsub.publish('MEMBER_JOINED_CHAT_ROOM',{
     
                                 memberJoinedRoom:{
-                                    user,
+                                    ...user,
                                     roomID
                                 }
     
@@ -152,9 +152,21 @@ const chatRoomResolver = {
 
             } else {
 
+                await ChatRoom.findOneAndUpdate( {_id:roomID} , {$push: { messages: { 
+
+                    date:new Date(),
+                    text,
+                    owner:user._id
+
+                }}})
+
+                const updatedData = await ChatRoom.findById(roomID);
+                const lastMessage = updatedData.messages[updatedData.messages.length-1];
+
                 pubsub.publish( 'MESSAGE_SENT' , {
 
                     messageSent:{
+                        _id:lastMessage._id,
                         text:text,
                         date:new Date(),
                         owner:user,
@@ -163,15 +175,7 @@ const chatRoomResolver = {
 
                 })
 
-                const updated = await ChatRoom.findOneAndUpdate( {_id:roomID} , {$push: { messages: { 
-
-                    date:new Date(),
-                    text,
-                    owner:user._id
-
-                }}})
-
-                return updated;
+                return lastMessage;
 
             }
 

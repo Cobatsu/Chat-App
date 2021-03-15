@@ -130,14 +130,13 @@ align-items:center;
 const Room = ({match})=>{
 
     const { data , loading , error , subscribeToMore } = useQuery(GET_CHAT_ROOM_QUERY,{
-        fetchPolicy:"network-only",
         variables:{
             roomID:match.params.id
         }
     });
 
     const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION);
-    const [ deleteMessage , { data:deletedMessage }] = useMutation(DELETE_MESSAGE_MUTATION);
+    const [ deleteMessage ] = useMutation(DELETE_MESSAGE_MUTATION);
 
     const currentUser = useSelector((state = {}) => state.user);
     
@@ -156,6 +155,8 @@ const Room = ({match})=>{
 
     }
 
+    console.log(data);
+
     const OnDeleteMessage = (ID)=>(e)=>{
 
             deleteMessage({
@@ -169,6 +170,7 @@ const Room = ({match})=>{
 
     useEffect(()=>{
 
+
         subscribeToMore({
             variables:{
                 roomID:match.params.id
@@ -177,24 +179,18 @@ const Room = ({match})=>{
             updateQuery:(prev, { subscriptionData })=>{
 
                 const subMessage = subscriptionData.data.messageSent;
-         
-                const updatedData = Object.assign({},prev.getChatRoom,{ // object assign mutates the just first original object !
-
-                    messages:[
-                        ...prev.getChatRoom.messages,
-                        subMessage
-                    ]                   
-
-                }) // this updates the present value in apollo cache
+                
+                const mergedData = Object.assign({},prev.getChatRoom,{
+                    messages:[...prev.getChatRoom.messages,subMessage]
+                })  // message type must be the same shape as prevmessagetype
 
                 return {
-                    getChatRoom:updatedData
-                }
+                    getChatRoom:mergedData  
+                } 
 
             }
         })
 
-     
         subscribeToMore({
             variables:{
                 roomID:match.params.id
@@ -202,15 +198,14 @@ const Room = ({match})=>{
             document:MEMBER_JOINED_ROOM_CHAT_ROOM,
             updateQuery:(prev,{subscriptionData})=>{
 
-                const joinedMember = subscriptionData.data.memberJoinedRoom.user;           
-                const updatedData = Object.assign({},prev.getChatRoom,{
+                const joinedMember = subscriptionData.data.memberJoinedRoom;        
 
-                    members:joinedMember
-
+                const mergedData = Object.assign({},prev.getChatRoom,{
+                    members:[...prev.getChatRoom.members, joinedMember]
                 })
 
                 return {
-                    getChatRoom:updatedData
+                    getChatRoom:mergedData
                 }
 
             }

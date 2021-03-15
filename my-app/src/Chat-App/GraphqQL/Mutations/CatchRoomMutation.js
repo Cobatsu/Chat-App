@@ -27,11 +27,9 @@ export const MEMBER_JOINED_ROOM = gql`
 
     subscription MemberJoined {
         memberJoined {
-            user {
-                username
-                _id
-            }
-            roomID
+             username
+             _id         
+             roomID
         }
     }
 
@@ -44,6 +42,7 @@ export const SEND_MESSAGE_MUTATION = gql`
         sendMessage(text:$text,roomID:$roomID) {
             
             _id
+            text
 
         }
 
@@ -56,22 +55,20 @@ export const DELETE_MESSAGE_MUTATION = gql`
     mutation DeleteMessage($messageID:ID!,$roomID:ID!) {
 
         deleteMessage(messageID:$messageID,roomID:$roomID) {
-
             _id
             text
-
         }
-
     }
-
 `
+
 
 export const MESSAGE_SENT = gql`
 
     subscription MessageSent($roomID:ID!) {
 
         messageSent(roomID:$roomID) {
-    
+
+            _id
             text
             date
             owner {
@@ -85,11 +82,19 @@ export const MESSAGE_SENT = gql`
 
 `
 
-// export const MESSAGE_DELETED = gql `
 
+export const MESSAGE_DELETED = gql `
+
+    subscription MessageDeleted($roomID:ID!) {
+
+        messageDeleted(roomID:$roomID) {
+            _id
+            text
+        }
+
+    }
  
- 
-// `   
+`   
 
 
 export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
@@ -97,12 +102,8 @@ export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
     subscription MemberJoinedRoom($roomID:ID!) {
 
         memberJoinedRoom(roomID:$roomID) {
-
-            user {
                 username
                 _id
-            }
-
         }
 
     }
