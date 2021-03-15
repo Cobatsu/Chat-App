@@ -367,7 +367,19 @@ const Room = ({match})=>{
 
                     <TextPart>
 
-                            <ChatTextInput ref={ ref => chatText = ref }/>
+                            <ChatTextInput ref={ ref => chatText = ref }
+                            
+                             onKeyDown={(e)=>{
+
+                                if(e.key == "Enter") { // we can use onKeyDown event to handle keyboard actions !
+                                    OnSendMessage()
+                                    e.target.value = ""
+                                }
+
+                             }}
+                            
+                            />
+
                             <Send onClick={OnSendMessage} > {
 
                                     Loading ? <img src="/spin.gif" width="30"/> : "SEND"
