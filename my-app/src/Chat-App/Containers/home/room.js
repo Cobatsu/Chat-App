@@ -178,6 +178,8 @@ const UpdateText = styled.input`
         border-radius:7px;
         border:none;
         padding:5px;
+        color:white;
+        background:#007580;
 
 `
 
@@ -309,14 +311,14 @@ const Room = ({match})=>{
 
                     case 'UPDATE':
 
+                        console.log(subMessage)
+
                         var updatedData = Object.assign({},prev.getChatRoom,{
 
                             messages:prev.getChatRoom.messages.map(
                             (msg)=> msg._id == subMessage._id ?  Object.assign({},msg,{text:subMessage.updatedText}) : msg )
 
                         })
-
-                        console.log(prev.getChatRoom)
 
                     break;
 

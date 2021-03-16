@@ -224,22 +224,25 @@ const chatRoomResolver = {
 
                 const prevMessage = room.messages.find((msg)=> msg._id == messageID );
                 
-                const updatedMessages = room.messages.map((msg)=> msg._id == messageID ? 
-                
-                {    
+                const updatedMessages = room.messages.map((msg)=> {
+
+                return msg._id == messageID ?  {
+
                     ...msg._doc,
-                    text:updatedText
-                    
-                }  : msg )
+                    text:updatedText }  : msg 
 
-               
-
+               } ) 
+                  
                 room.messages = updatedMessages;
 
                 pubsub.publish('MESSAGE',{
 
-                    message:{         
+                    message:{    
+
                         _id:messageID,
+                        text:prevMessage.text,
+                        owner:prevMessage.owner,
+                        date:prevMessage.date,
                         actionType:'UPDATE',
                         updatedText,
                         roomID 
@@ -285,7 +288,12 @@ const chatRoomResolver = {
         date:(parent)=>{  // to modify a single field we can use these functions too
             
             const newDate = new Date(parent.date)  
-            const editedTime = newDate.getHours() + ":" +  ( newDate.getMinutes().toString().length == 1 ? '0'+ newDate.getMinutes() : newDate.getMinutes() )
+
+            const editedTime = 
+
+            ( newDate.getHours().toString().length == 1 ?    ('0' + newDate.getHours() )  : newDate.getHours() ) 
+             + ":" +  
+            ( newDate.getMinutes().toString().length == 1 ?  ( '0'+ newDate.getMinutes() )  : newDate.getMinutes() )
 
             return editedTime;
 
