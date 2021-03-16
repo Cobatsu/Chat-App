@@ -155,12 +155,11 @@ const chatRoomResolver = {
                 pubsub.publish('MESSAGE', {
 
                     message:{
-                        _id:deletedMessage._id,
-                        text:deletedMessage.text,
-                        date:deletedMessage.date,
-                        owner:user,
+
+                        _id:messageID,
                         actionType:'DELETE',
                         roomID
+
                     }
 
                 })
@@ -209,6 +208,51 @@ const chatRoomResolver = {
                 return lastMessage;
 
             }
+
+        },
+
+        updateMessage: async (_, { messageID , updatedText , roomID } , { user } )=>{ 
+
+            
+            if(!user) {
+
+                throw new AuthenticationError("INVALID TOKEN");  
+
+            } else {
+
+                const room = await ChatRoom.findById(roomID);
+
+                const prevMessage = room.messages.find((msg)=> msg._id == messageID );
+                
+                const updatedMessages = room.messages.map((msg)=> msg._id == messageID ? 
+                
+                {    
+                    ...msg._doc,
+                    text:updatedText
+                    
+                }  : msg )
+
+               
+
+                room.messages = updatedMessages;
+
+                pubsub.publish('MESSAGE',{
+
+                    message:{         
+                        _id:messageID,
+                        actionType:'UPDATE',
+                        updatedText,
+                        roomID 
+                    }
+
+                })
+
+                await room.save();
+
+                return prevMessage;
+
+            }
+
 
         }
 

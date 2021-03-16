@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect,useState} from 'react';
 import { useQuery , useMutation } from '@apollo/client'
 import { GET_CHAT_ROOM_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
 import {  
@@ -7,7 +7,9 @@ import {
     MESSAGE,
     MEMBER_JOINED_ROOM_CHAT_ROOM ,
     DELETE_MESSAGE_MUTATION , 
-    LEAVE_ROOM_MUTATION } from '../../GraphqQL/Mutations/CatchRoomMutation'
+    LEAVE_ROOM_MUTATION ,
+    UPDATE_MESSAGE_MUTATION
+} from '../../GraphqQL/Mutations/CatchRoomMutation'
 
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
@@ -102,7 +104,7 @@ const Messages = styled.ul`
  overflow-x: hidden;
 `
 
-const DeleteTextBubble = styled.div`
+const EditTextBubble = styled.div`
 
 align-items:center;
 justify-content:center;
@@ -125,7 +127,7 @@ const InnerMessage = styled.li`
  &:hover {
     background:${ ({checkOwner})=> checkOwner ? '#f8f1f1' : 'auto'};
  }
- &:hover ${DeleteTextBubble}{
+ &:hover ${EditTextBubble}{
     width:auto;
     padding:0 7px;
     cursor:pointer;
@@ -170,7 +172,14 @@ const LeaveGroup = styled.button`
     padding:10px;
 
 `
+const UpdateText = styled.input`
 
+        outline: none;
+        border-radius:7px;
+        border:none;
+        padding:5px;
+
+`
 
 const memberColors = [ "#025955 ", "#28527a", "DarkCyan", "DarkGoldenRod", "DarkBlue", "DarkRed", "DarkOrange", "Indigo" , "Purple" , "YellowGreen"];
 
@@ -182,8 +191,15 @@ const Room = ({match})=>{
         }
     });
     const history = useHistory();
+
+    const [isBeingUpdatedID,setIsBeingUpdatedID] = useState(false);
+
     const [ send , { loading:Loading } ] = useMutation(SEND_MESSAGE_MUTATION);
+
     const [ deleteMessage ] = useMutation(DELETE_MESSAGE_MUTATION);
+    
+    const [ updateMessage ] = useMutation(UPDATE_MESSAGE_MUTATION);
+
     const [ leaveRoom ] = useMutation(LEAVE_ROOM_MUTATION , {
 
         onCompleted:(data)=>{
@@ -234,6 +250,20 @@ const Room = ({match})=>{
 
     }
 
+    const onUpdateMessage = (ID,value)=>{
+
+            updateMessage({
+
+                variables:{
+                    messageID:ID || null,
+                    roomID:match.params.id || null,
+                    updatedText:value || null
+                }
+
+            })
+
+    }
+
     useEffect(()=>{ // we can handle user's status in room by using unmount function provided by useffect !
 
         return ()=>{
@@ -260,6 +290,8 @@ const Room = ({match})=>{
 
                     case 'SEND': 
 
+                        setTimeout(()=>{ var chat = document.querySelector(".chatMessages"); chat.scrollTo(0, 7000); },0)
+
                         var updatedData = Object.assign({},prev.getChatRoom,{
                             messages:prev.getChatRoom.messages.concat(subMessage)
                         })  // message type must be the same shape as prevmessagetype
@@ -277,7 +309,14 @@ const Room = ({match})=>{
 
                     case 'UPDATE':
 
-                        /// update message
+                        var updatedData = Object.assign({},prev.getChatRoom,{
+
+                            messages:prev.getChatRoom.messages.map(
+                            (msg)=> msg._id == subMessage._id ?  Object.assign({},msg,{text:subMessage.updatedText}) : msg )
+
+                        })
+
+                        console.log(prev.getChatRoom)
 
                     break;
 
@@ -317,13 +356,14 @@ const Room = ({match})=>{
 
     },[])
 
-    let chatText;
+    var chatText;
+    var updatedText;
 
     return <GeneralWrapper> 
 
             <LeaveGroup onClick={onLeaveRoom}>  
                     
-                <i className="fas fa-sign-out-alt"></i> LEAVE THE ROOM 
+                 LEAVE THE ROOM  <i style={{fontSize:14 , marginLeft:4}} className="fas fa-sign-out-alt"></i>
 
             </LeaveGroup>
             
@@ -389,7 +429,7 @@ const Room = ({match})=>{
 
             <ChatBox>
 
-                     { loading ? " Messages are loading...."  : <Messages>
+                     { loading ? " Messages are loading...."  : <Messages className="chatMessages" >
 
 
                         {
@@ -412,18 +452,47 @@ const Room = ({match})=>{
                                                                                                 
                                             <TextBubble>  
 
-                                                    {msg.text}
+                                                   {
+                                                       isBeingUpdatedID ==  msg._id ? 
+                                                     
+                                                       ( <UpdateText 
+                                                        
+                                                            onKeyDown={(e)=>{
+
+                                                                if(e.key == "Enter") { 
+
+                                                                    onUpdateMessage( msg._id , e.target.value )
+                                                                    setIsBeingUpdatedID(null);
+
+                                                                }   
+                                                            }}
+
+                                                        defaultValue = {msg.text} /> 
+                                                        
+                                                        ) : msg.text
+                                                   } 
 
                                             </TextBubble>
 
                                             {
                                                     msg.owner._id == currentUser._id &&  (
 
-                                                    <DeleteTextBubble onClick={OnDeleteMessage(msg._id)} >
+                                                    <React.Fragment>
 
-                                                        <i style={{color:"#ec4646"}} className="fas fa-trash-alt"></i>
-        
-                                                    </DeleteTextBubble> )
+                                                            <EditTextBubble onClick={OnDeleteMessage(msg._id)} >
+
+                                                                <i style={{color:"#ec4646"}} className="fas fa-trash-alt"></i>
+                
+                                                            </EditTextBubble> 
+
+
+                                                            <EditTextBubble  onClick={ ()=> setIsBeingUpdatedID(msg._id) } >
+
+                                                                <i style={{color:"#ec4646"}} className="fas fa-edit"></i>
+                
+                                                            </EditTextBubble>
+                                                    
+                                                    </React.Fragment>)
                                             }
                                           
 

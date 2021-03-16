@@ -83,7 +83,19 @@ export const DELETE_MESSAGE_MUTATION = gql`
         }
     }
 `
+export const UPDATE_MESSAGE_MUTATION = gql`
 
+    mutation UpdateMessage($messageID:ID!,$updatedText:String!,$roomID:ID!) {
+
+        updateMessage(messageID:$messageID,updatedText:$updatedText,roomID:$roomID){
+
+            _id
+            text
+        }
+
+    }
+
+`
 
 export const MESSAGE = gql`
 
@@ -99,7 +111,7 @@ export const MESSAGE = gql`
                 _id
             }
             actionType
-
+            updatedText
         }
 
     }
