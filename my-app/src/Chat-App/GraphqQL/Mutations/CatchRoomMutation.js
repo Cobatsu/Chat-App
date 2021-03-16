@@ -85,11 +85,11 @@ export const DELETE_MESSAGE_MUTATION = gql`
 `
 
 
-export const MESSAGE_SENT = gql`
+export const MESSAGE = gql`
 
     subscription MessageSent($roomID:ID!) {
 
-        messageSent(roomID:$roomID) {
+        message(roomID:$roomID) {
 
             _id
             text
@@ -98,6 +98,7 @@ export const MESSAGE_SENT = gql`
                 username
                 _id
             }
+            actionType
 
         }
 
@@ -105,19 +106,6 @@ export const MESSAGE_SENT = gql`
 
 `
 
-
-export const MESSAGE_DELETED = gql `
-
-    subscription MessageDeleted($roomID:ID!) {
-
-        messageDeleted(roomID:$roomID) {
-            _id
-            text
-        }
-
-    }
- 
-`   
 
 export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
 

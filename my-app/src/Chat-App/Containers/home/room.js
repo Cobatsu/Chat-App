@@ -4,8 +4,7 @@ import { GET_CHAT_ROOM_QUERY } from '../../GraphqQL/Queries/ChatRoomQuery'
 import {  
     
     SEND_MESSAGE_MUTATION , 
-    MESSAGE_SENT , 
-    MESSAGE_DELETED  , 
+    MESSAGE,
     MEMBER_JOINED_ROOM_CHAT_ROOM ,
     DELETE_MESSAGE_MUTATION , 
     LEAVE_ROOM_MUTATION } from '../../GraphqQL/Mutations/CatchRoomMutation'
@@ -173,7 +172,7 @@ const LeaveGroup = styled.button`
 `
 
 
-const memberColors = [ "BlueViolet ", "Chartreuse", "DarkCyan", "DarkGoldenRod", "DarkBlue", "DarkRed", "DarkOrange", "Indigo" , "Purple" , "YellowGreen"];
+const memberColors = [ "#025955 ", "#28527a", "DarkCyan", "DarkGoldenRod", "DarkBlue", "DarkRed", "DarkOrange", "Indigo" , "Purple" , "YellowGreen"];
 
 const Room = ({match})=>{
 
@@ -247,40 +246,48 @@ const Room = ({match})=>{
 
     useEffect(()=>{
 
-
         subscribeToMore({
             variables:{
-                roomID:match.params.id
+                roomID:match.params.id,
             },
-            document:MESSAGE_SENT,
+            document:MESSAGE,
             updateQuery:(prev, { subscriptionData })=>{
 
-                const subMessage = subscriptionData.data.messageSent;
-                
-                const mergedData = Object.assign({},prev.getChatRoom,{
-                    messages:prev.getChatRoom.messages.concat(subMessage)
-                })  // message type must be the same shape as prevmessagetype
+                const subMessage = subscriptionData.data.message;
+                const type = subscriptionData.data.message.actionType;
 
-                return {
-                    getChatRoom:mergedData  
-                } 
+                switch(type) {
 
-            }
-        })
+                    case 'SEND': 
 
-        subscribeToMore({ // we can write a function that handles both delete and send actions but it is okay just for now 
-            variables:{
-                roomID:match.params.id
-            },
-            document:MESSAGE_DELETED,
-            updateQuery:(prev , { subscriptionData } )=>{
+                        var updatedData = Object.assign({},prev.getChatRoom,{
+                            messages:prev.getChatRoom.messages.concat(subMessage)
+                        })  // message type must be the same shape as prevmessagetype
+    
+                    break;
 
-                const deletedMessage = subscriptionData.data.messageDeleted
+                    case 'DELETE':
 
-                const updatedData = Object.assign({},prev.getChatRoom,{
-                    messages:prev.getChatRoom.messages.filter((msg)=> msg._id != deletedMessage._id )
-                })
+                        var updatedData = Object.assign({},prev.getChatRoom,{
+                            messages:prev.getChatRoom.messages.filter((msg)=> msg._id != subMessage._id )
+                        })
+        
+                    break;
 
+
+                    case 'UPDATE':
+
+                        /// update message
+
+                    break;
+
+                    default:
+
+                        var updatedData = prev.getChatRoom;
+
+                    break;
+                }
+              
                 return {
                     getChatRoom:updatedData  
                 } 
@@ -298,7 +305,7 @@ const Room = ({match})=>{
                 const joinedMember = subscriptionData.data.memberJoinedRoom;        
 
                 const mergedData = Object.assign({},prev.getChatRoom,{
-                    members:[...prev.getChatRoom.members, joinedMember]
+                    members:prev.getChatRoom.members.concat(joinedMember)
                 })
 
                 return {
@@ -316,7 +323,7 @@ const Room = ({match})=>{
 
             <LeaveGroup onClick={onLeaveRoom}>  
                     
-                <i class="fas fa-sign-out-alt"></i> LEAVE THE ROOM 
+                <i className="fas fa-sign-out-alt"></i> LEAVE THE ROOM 
 
             </LeaveGroup>
             
@@ -335,7 +342,7 @@ const Room = ({match})=>{
                                 ( 
                                         
                                     {
-                                        ( data.getChatRoom.limit  + '/' +  data.getChatRoom.members.length )     
+                                        ( data.getChatRoom.members.length + '/' +   data.getChatRoom.limit)     
                                     }
 
                                     <i style={{fontSize:10}} className="fas fa-user"/> 

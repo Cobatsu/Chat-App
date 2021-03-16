@@ -12,12 +12,11 @@ type Room {
 }
 
 type Message {
-
     _id:ID!
     owner:User!
     text:String!
     date:String!
-
+    actionType:String!
 }
 
 type RoomSubscripton {
@@ -32,8 +31,7 @@ input RoomInput {
 
 type Subscription {
     memberJoined: RoomSubscripton!
-    messageSent(roomID:ID!):  Message!
-    messageDeleted(roomID:ID!): Message!
+    message(roomID:ID!):  Message!
     memberJoinedRoom(roomID:ID!): User!
 }
 

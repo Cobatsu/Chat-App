@@ -91,7 +91,7 @@ const chatRoomResolver = {
                             pubsub.publish('MEMBER_JOINED_ROOM',{
         
                                 memberJoined:{
-                                    ...user,
+                                    user,
                                     roomID
                                 }
                               
@@ -140,18 +140,26 @@ const chatRoomResolver = {
 
             } else {
 
-            
                 const deleted = await ChatRoom.findById(roomID);
                 
                 const updatedData = deleted.messages.filter((msg)=>  msg._id != messageID )  
 
                 const deletedMessage = deleted.messages.find((msg)=> msg._id == messageID )
 
-                pubsub.publish('MESSAGE_DELETED', {
+                if( deletedMessage.owner != user._id ) {
 
-                    messageDeleted:{
-                        _id:messageID,
+                    throw new ForbiddenError("Forbidden!"); 
+
+                }
+
+                pubsub.publish('MESSAGE', {
+
+                    message:{
+                        _id:deletedMessage._id,
                         text:deletedMessage.text,
+                        date:deletedMessage.date,
+                        owner:user,
+                        actionType:'DELETE',
                         roomID
                     }
 
@@ -185,13 +193,14 @@ const chatRoomResolver = {
                 const updatedData = await ChatRoom.findById(roomID);
                 const lastMessage = updatedData.messages[updatedData.messages.length-1];
 
-                pubsub.publish( 'MESSAGE_SENT' , {
+                pubsub.publish( 'MESSAGE' , {
 
-                    messageSent:{
+                    message:{
                         _id:lastMessage._id,
                         text:text,
                         date:new Date(),
                         owner:user,
+                        actionType:'SEND',
                         roomID
                     }
 
@@ -248,19 +257,20 @@ const chatRoomResolver = {
             
         },
 
-        messageSent: {
+        message: {
 
             subscribe: withFilter( 
             
-            () => pubsub.asyncIterator('MESSAGE_SENT'),
+            () => pubsub.asyncIterator('MESSAGE'),
             (payload,args)=>{
 
-                return args.roomID ==  payload.messageSent.roomID
+                return args.roomID ==  payload.message.roomID
 
             })
 
         },
 
+      
         memberJoinedRoom: {
 
             subscribe: withFilter( 
@@ -275,22 +285,9 @@ const chatRoomResolver = {
                 }
             )
 
-        },
-
-
-        messageDeleted: {
-
-            subscribe: withFilter( 
-            
-                () => pubsub.asyncIterator('MESSAGE_DELETED'),
-                (payload,args)=>{
-                    
-                    return args.roomID ==  payload.messageDeleted.roomID
-    
-                }
-            )
-
         }
+
+
     }
 
 }
