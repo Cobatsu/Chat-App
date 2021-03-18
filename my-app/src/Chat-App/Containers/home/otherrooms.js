@@ -91,31 +91,15 @@ const OtherRooms = ()=>{
         useEffect(()=>{
 
                 subscribeToMore({
-
                         document:MEMBER_JOINED_ROOM,
                         updateQuery:(prev, { subscriptionData } )=>{
 
                             if (!subscriptionData.data) return prev;
                                 
-                            const {memberJoined:{user,roomID}} = subscriptionData.data;
+                            const {room:{user,roomID}} = subscriptionData.data;
 
-                            const newData = prev.getOtherRooms.map((obj,_)=>{
-
-                                        if( roomID == obj._id ) {
-
-                                                return { 
-                                                        ...obj,
-                                                        members:[
-                                                                ...obj.members,
-                                                                user
-                                                        ]
-                                                }
-
-                                        } 
-
-                                        return obj;
-
-                            })  
+                            const newData = prev.getOtherRooms.map((obj,_)=> obj._id == roomID ? 
+                            Object.assign({},obj, { members: obj.members.concat(user) }) :  obj )
 
                             return {
                                 getOtherRooms:newData // this data format must be the same as old one

@@ -40,12 +40,10 @@ export const LEAVE_ROOM_MUTATION = gql`
 `
 
 
-
-
 export const MEMBER_JOINED_ROOM = gql`
 
-    subscription MemberJoined {
-        memberJoined {
+    subscription MemberJoined($roomID:ID!) {
+        room(roomID:$roomID) {
 
              user {
                 username
@@ -53,6 +51,7 @@ export const MEMBER_JOINED_ROOM = gql`
              }
             
              roomID
+             actionType
         }
     }
 
@@ -119,16 +118,4 @@ export const MESSAGE = gql`
 `
 
 
-export const MEMBER_JOINED_ROOM_CHAT_ROOM = gql`
-
-    subscription MemberJoinedRoom($roomID:ID!) {
-
-        memberJoinedRoom(roomID:$roomID) {
-                username
-                _id
-        }
-
-    }
-
-`
 

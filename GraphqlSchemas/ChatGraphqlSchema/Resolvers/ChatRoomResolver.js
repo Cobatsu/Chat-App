@@ -70,7 +70,7 @@ const chatRoomResolver = {
            
         } , 
 
-        joinRoom: async (_, { roomID , memberLength , limit } , { user } )=>{
+        joinRoom: async (_, { roomID } , { user } )=>{
         
                 if(!user) {
 
@@ -88,21 +88,12 @@ const chatRoomResolver = {
     
                             }
     
-                            pubsub.publish('MEMBER_JOINED_ROOM',{
-        
-                                memberJoined:{
-                                    user,
-                                    roomID
-                                }
-                              
-                            });
-                            
-                            
-                            pubsub.publish('MEMBER_JOINED_CHAT_ROOM',{
+                            pubsub.publish('ROOM',{
     
-                                memberJoinedRoom:{
-                                    ...user,
-                                    roomID
+                                room:{
+                                    user,
+                                    roomID,
+                                    actionType:'JOIN'
                                 }
     
                             });
@@ -126,7 +117,19 @@ const chatRoomResolver = {
             if(!user) {
                 throw new AuthenticationError("INVALID TOKEN"); 
             } else {
+
                 const leftRoom = await ChatRoom.findOneAndUpdate({ _id:roomID} , {$pull:{ members:user._id }});
+             
+                pubsub.publish('ROOM',{
+    
+                    room:{
+                        user,
+                        roomID,
+                        actionType:'LEAVE'
+                    }
+
+                });
+
                 return leftRoom
             }
             
@@ -240,9 +243,6 @@ const chatRoomResolver = {
                     message:{    
 
                         _id:messageID,
-                        text:prevMessage.text,
-                        owner:prevMessage.owner,
-                        date:prevMessage.date,
                         actionType:'UPDATE',
                         updatedText,
                         roomID 
@@ -303,12 +303,29 @@ const chatRoomResolver = {
 
     Subscription: {
 
-        memberJoined: {
+        room: {
+
+            subscribe: withFilter( 
             
-            subscribe: () => pubsub.asyncIterator(['MEMBER_JOINED_ROOM'])
-            
+                () => pubsub.asyncIterator('ROOM'),
+                (payload,args)=>{
+                    
+                    if(args.roomID) {
+                    
+                        return args.roomID ==  payload.room.roomID 
+
+                    } else {
+
+                        return true
+
+                    }
+    
+                }
+            )
+
         },
 
+     
         message: {
 
             subscribe: withFilter( 
@@ -323,21 +340,7 @@ const chatRoomResolver = {
         },
 
       
-        memberJoinedRoom: {
-
-            subscribe: withFilter( 
-            
-                () => pubsub.asyncIterator('MEMBER_JOINED_CHAT_ROOM'),
-                (payload,args)=>{
-                    
-                    console.log("hello");
-
-                    return args.roomID ==  payload.memberJoinedRoom.roomID
-    
-                }
-            )
-
-        }
+       
 
 
     }

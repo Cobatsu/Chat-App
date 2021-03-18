@@ -5,7 +5,7 @@ import {
     
     SEND_MESSAGE_MUTATION , 
     MESSAGE,
-    MEMBER_JOINED_ROOM_CHAT_ROOM ,
+    MEMBER_JOINED_ROOM,
     DELETE_MESSAGE_MUTATION , 
     LEAVE_ROOM_MUTATION ,
     UPDATE_MESSAGE_MUTATION
@@ -14,6 +14,7 @@ import {
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom'
+import { valueFromAST } from 'graphql';
 
 
 const GeneralWrapper = styled.div`
@@ -112,6 +113,7 @@ display:flex;
 overflow: hidden;
 width:0;
 transition:110ms;
+
 `
 
 
@@ -128,8 +130,8 @@ const InnerMessage = styled.li`
     background:${ ({checkOwner})=> checkOwner ? '#f8f1f1' : 'auto'};
  }
  &:hover ${EditTextBubble}{
+    margin-left:8px;
     width:auto;
-    padding:0 7px;
     cursor:pointer;
 }
  
@@ -188,9 +190,10 @@ const memberColors = [ "#025955 ", "#28527a", "DarkCyan", "DarkGoldenRod", "Dark
 const Room = ({match})=>{
 
     const { data , loading , error , subscribeToMore } = useQuery(GET_CHAT_ROOM_QUERY,{
+        fetchPolicy:"network-only",
         variables:{
             roomID:match.params.id
-        }
+        },
     });
     const history = useHistory();
 
@@ -241,7 +244,7 @@ const Room = ({match})=>{
 
     }
 
-    const OnDeleteMessage = (ID)=>(e)=>{
+    const OnDeleteMessage = (ID)=>{
 
             deleteMessage({
                 variables:{
@@ -276,6 +279,7 @@ const Room = ({match})=>{
 
     },[])
 
+
     useEffect(()=>{
 
         subscribeToMore({
@@ -287,7 +291,7 @@ const Room = ({match})=>{
 
                 const subMessage = subscriptionData.data.message;
                 const type = subscriptionData.data.message.actionType;
-
+                
                 switch(type) {
 
                     case 'SEND': 
@@ -298,7 +302,7 @@ const Room = ({match})=>{
                             messages:prev.getChatRoom.messages.concat(subMessage)
                         })  // message type must be the same shape as prevmessagetype
     
-                    break;
+                    break;  
 
                     case 'DELETE':
 
@@ -311,7 +315,7 @@ const Room = ({match})=>{
 
                     case 'UPDATE':
 
-                        console.log(subMessage)
+                        setIsBeingUpdatedID(null);
 
                         var updatedData = Object.assign({},prev.getChatRoom,{
 
@@ -319,7 +323,7 @@ const Room = ({match})=>{
                             (msg)=> msg._id == subMessage._id ?  Object.assign({},msg,{text:subMessage.updatedText}) : msg )
 
                         })
-
+ 
                     break;
 
                     default:
@@ -340,14 +344,37 @@ const Room = ({match})=>{
             variables:{
                 roomID:match.params.id
             },
-            document:MEMBER_JOINED_ROOM_CHAT_ROOM,
+            document:MEMBER_JOINED_ROOM,
             updateQuery:(prev,{subscriptionData})=>{
 
-                const joinedMember = subscriptionData.data.memberJoinedRoom;        
+                const joinedMember = subscriptionData.data.room;        
 
-                const mergedData = Object.assign({},prev.getChatRoom,{
-                    members:prev.getChatRoom.members.concat(joinedMember)
-                })
+                switch(joinedMember.actionType) {
+
+                   case "JOIN":
+
+                        var mergedData = Object.assign({},prev.getChatRoom,{
+                            members:prev.getChatRoom.members.concat(joinedMember.user)
+                        })
+
+                   break;
+
+                   case "LEAVE":
+
+                        var mergedData = Object.assign({},prev.getChatRoom,{
+                            members:prev.getChatRoom.members.filter((m)=> m._id != joinedMember.user._id )
+                        })
+
+                   break;
+
+                   default:
+
+                         var mergedData = prev.getChatRoom;
+
+                    break;
+
+                }
+              
 
                 return {
                     getChatRoom:mergedData
@@ -359,7 +386,7 @@ const Room = ({match})=>{
     },[])
 
     var chatText;
-    var updatedText;
+ 
 
     return <GeneralWrapper> 
 
@@ -464,8 +491,7 @@ const Room = ({match})=>{
                                                                 if(e.key == "Enter") { 
 
                                                                     onUpdateMessage( msg._id , e.target.value )
-                                                                    setIsBeingUpdatedID(null);
-
+                                                                  
                                                                 }   
                                                             }}
 
@@ -481,7 +507,7 @@ const Room = ({match})=>{
 
                                                     <React.Fragment>
 
-                                                            <EditTextBubble onClick={OnDeleteMessage(msg._id)} >
+                                                            <EditTextBubble onClick={ ()=> OnDeleteMessage(msg._id) } >
 
                                                                 <i style={{color:"#ec4646"}} className="fas fa-trash-alt"></i>
                 
@@ -491,6 +517,13 @@ const Room = ({match})=>{
                                                             <EditTextBubble  onClick={ ()=> setIsBeingUpdatedID(msg._id) } >
 
                                                                 <i style={{color:"#ec4646"}} className="fas fa-edit"></i>
+                
+                                                            </EditTextBubble>
+
+
+                                                            <EditTextBubble  onClick={ ()=> setIsBeingUpdatedID(msg._id) } >
+
+                                                                <i style={{color:"#ec4646"}} className="fas fa-reply"></i>
                 
                                                             </EditTextBubble>
                                                     

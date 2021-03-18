@@ -23,6 +23,7 @@ type Message {
 type RoomSubscripton {
     user:User!
     roomID:ID!
+    actionType:String!
 }
 
 input RoomInput {
@@ -31,9 +32,8 @@ input RoomInput {
 }
 
 type Subscription {
-    memberJoined: RoomSubscripton!
     message(roomID:ID!):  Message!
-    memberJoinedRoom(roomID:ID!): User!
+    room(roomID:ID): RoomSubscripton!
 }
 
 extend type Query{
