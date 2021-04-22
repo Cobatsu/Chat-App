@@ -190,7 +190,6 @@ const memberColors = [ "#025955 ", "#28527a", "DarkCyan", "DarkGoldenRod", "Dark
 const Room = ({match})=>{
 
     const { data , loading , error , subscribeToMore } = useQuery(GET_CHAT_ROOM_QUERY,{
-        fetchPolicy:"network-only",
         variables:{
             roomID:match.params.id
         },
@@ -402,7 +401,7 @@ const Room = ({match})=>{
                 
                     GROUP MEMBERS 
                     
-                    <span style={{marginLeft:5}}>
+                    <span style={{marginLeft:5, fontWeight:600}}>
                         
                         { data &&  
                         
@@ -414,7 +413,7 @@ const Room = ({match})=>{
                                         ( data.getChatRoom.members.length + '/' +   data.getChatRoom.limit)     
                                     }
 
-                                    <i style={{fontSize:10}} className="fas fa-user"/> 
+                                    <i style={{fontSize:10,marginLeft:2}} className="fas fa-user"/> 
                                     
                                 )
                                         
@@ -495,7 +494,7 @@ const Room = ({match})=>{
                                                                 }   
                                                             }}
 
-                                                        defaultValue = {msg.text} /> 
+                                                             defaultValue = {msg.text} /> 
                                                         
                                                         ) : msg.text
                                                    } 
