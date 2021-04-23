@@ -134,7 +134,7 @@ const OtherRooms = ()=>{
 
                                                 <span style={{display:'flex',alignItems:'center',justifyContent:'flex-start',flex:1}} >   
                                                         <i style={{marginRight:8 , color:"#00af91" }} className="fas fa-comment"></i>
-                                                        {room.title.length > 5 ? room.title.slice(0,5) + "..." : room.title} 
+                                                        {room.title.length > 10 ? room.title.slice(0,5) + "..." : room.title} 
                                                 </span>
 
 
@@ -148,7 +148,7 @@ const OtherRooms = ()=>{
                                                 color:room.members.length === room.limit ? 'red' : '#76a21e'
                                                 ,justifyContent:'space-between',width:'60px',flex:0.5}}>
                                                         <i style={{marginRight:8 , color:"#00af91" }} className="fas fa-user-friends"></i>
-                                                        {room.limit + "/" + room.members.length }                              
+                                                        { room.members.length+ "/" +  room.limit}                              
                                                 </span>
 
                                         </InnerRooms> 

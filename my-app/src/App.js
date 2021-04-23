@@ -26,11 +26,11 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 const httpTerminatingLink = new HttpLink({
-  uri:"http://192.168.0.27:8000/graphql"
+  uri:"http://localhost:8000/graphql"
 });
 
 const wsLink = new WebSocketLink({
-  uri: "ws://192.168.0.27:8000/subscriptions",
+  uri: "ws://localhost:8000/subscriptions",
   options: {
     reconnect: true,
     connectionParams:{

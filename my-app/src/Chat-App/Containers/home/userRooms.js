@@ -120,7 +120,7 @@ const UserRooms = ( { timeToRefetch , setTimeToRefetch} )=>{
 
                                                 <span style={{display:'flex',alignItems:'center',width:'60px',justifyContent:'space-between'}}>
                                                         <i style={{marginRight:8 , color:"#f05454" }} className="fas fa-user-friends"></i>
-                                                        {room.limit + "/" + room.members.length }                              
+                                                        { room.members.length+ "/" +  room.limit}                             
                                                 </span>
 
                                         </InnerRooms> 
